@@ -1,0 +1,180 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    max-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+#img1 {
+    height: 70px;
+    width: auto;
+    cursor: pointer;
+}
+
+#img2 {
+    height: 50px;
+    width: auto;
+    cursor: pointer;
+}
+
+#container{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#table table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+#table table th, #table table td {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+#input {
+    width: 370px;
+    padding: 10px;
+    margin-top: 50px;
+}
+
+#input input {
+    display: block;
+    margin-bottom: 10px;
+}
+
+#input button {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+
+#submenu {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 40px;
+    left: 10px;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid black;
+    width: 150px;
+    flex-wrap: wrap;
+}
+
+#submenu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#submenu li {
+    margin-bottom: 10px;
+}
+
+#submenu a:hover {
+    background-color: lightgray;
+}
+
+#submenu a {
+    text-decoration: none;
+    color: black;
+}
+
+
+/* Общие стили для всех форм */
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button[type="submit"],
+button[type="button"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover,
+button[type="button"]:hover {
+    background-color: #45a049;
+}
+
+/* Стили для формы изменения */
+#editForm {
+    display: none;
+}
+
+#editForm label {
+    font-weight: bold;
+}
+
+#editForm button[type="submit"] {
+    background-color: #f44336;
+}
+
+/* Стили для формы создания */
+#createForm {
+    display: none;
+}
+
+#createForm label {
+    font-weight: bold;
+}
+
+#createForm button[type="submit"] {
+    background-color: #f44336;
+}
+
+/* Стили для формы удаления */
+#deleteForm {
+    display: none;
+}
+
+#deleteForm label {
+    font-weight: bold;
+}
+
+#deleteForm button[type="button"] {
+    background-color: #f44336;
+}
+
+/* Подсветка строк таблиц */
+#table tbody tr:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+#table tbody tr.selected {
+    background-color: #dcdcdc;
+}
+

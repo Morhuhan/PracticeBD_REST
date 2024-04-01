@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Управление Местами</title>
+    <link rel="stylesheet" type="text/css" href="form.css">
+    <script th:inline="javascript" src="Seat.js"></script>
+    <script th:inline="javascript" src="ToggleMenu.js"></script>
+    <script th:inline="javascript" src="Listener.js"></script>
+</head>
+
+<body>
+
+<header>
+    <img src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+</header>
+
+<div id="submenu">
+    <ul>
+        <!--TODO-->
+    </ul>
+</div>
+
+<div id="container">
+    <div id="table">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID аудитории</th>
+                <th>Номер</th>
+                <th>Имя рабочей станции</th>
+                <th>IP-адрес</th>
+                <th>Примечание</th>
+            </tr>
+            </thead>
+            <tbody data-table-type="seat">
+            <tr th:each="seat : ${seats}" th:data-id="${seat.id}">
+                <td th:text="${seat.id}"></td>
+                <td th:text="${seat.id_classroom}"></td>
+                <td th:text="${seat.number}"></td>
+                <td th:text="${seat.WS_name}"></td>
+                <td th:text="${seat.ip}"></td>
+                <td th:text="${seat.note}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="input">
+        <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+        <button type="button" onclick="ShowEditForm()">Изменить</button>
+        <button type="button" onclick="ShowCreateForm()">Создать</button>
+    </div>
+
+    <!--Форма изменения-->
+    <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
+        <h1>Изменение Места</h1>
+
+        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
+
+        <label for="edit_idClassroom">Класс:</label>
+        <select id="edit_idClassroom" name="idClassroom">
+            <option th:each="classroom : ${classrooms}" th:value="${classroom.id}" th:text="
+            'ID: ' + ${classroom.id} + ' ' +
+            'Кафедра: ' + ${classroom.department}"></option>
+        </select>
+
+        <label for="edit_number">Номер места:</label>
+        <input type="text" id="edit_number" name="number" placeholder="Номер">
+
+        <label for="edit_WSName">Имя рабочей станции:</label>
+        <input type="text" id="edit_WSName" name="WS_name" placeholder="Имя рабочей станции">
+
+        <label for="edit_ip">IP-адрес:</label>
+        <input type="text" id="edit_ip" name="ip" placeholder="IP-адрес">
+
+        <label for="edit_note">Примечание:</label>
+        <input type="text" id="edit_note" name="note" placeholder="Примечание">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма создания-->
+    <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
+        <h1>Создание Места</h1>
+
+        <label for="create_idClassroom">ID аудитории:</label>
+        <select id="create_idClassroom" name="idClassroom">
+            <option th:each="classroom : ${classrooms}" th:value="${classroom.id}" th:text="
+            'ID: ' + ${classroom.id} + ' ' +
+            'Кафедра: ' + ${classroom.department}"></option>
+        </select>
+
+        <label for="create_number">Номер:</label>
+        <input type="text" id="create_number" name="number" placeholder="Номер">
+
+        <label for="create_WSName">Имя рабочей станции:</label>
+        <input type="text" id="create_WSName" name="WS_name" placeholder="Имя рабочей станции">
+
+        <label for="create_ip">IP-адрес:</label>
+        <input type="text" id="create_ip" name="ip" placeholder="IP-адрес">
+
+        <label for="create_note">Примечание:</label>
+        <input type="text" id="create_note" name="note" placeholder="Примечание">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма удаления-->
+    <div id="deleteForm">
+        <h1>Удаление Места</h1>
+
+        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
+
+        <button type="button" onclick="submitDeleteForm()">Удалить</button>
+    </div>
+</div>
+
+</body>
+</html>

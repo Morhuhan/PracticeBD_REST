@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Управление Местоположениями</title>
+    <link rel="stylesheet" type="text/css" href="css/form.css">
+    <script th:inline="javascript" src="SubmitFormFunctions/Allocation.js"></script>
+    <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
+    <script th:inline="javascript" src="Utility/Listener.js"></script>
+</head>
+
+<body>
+
+<header>
+    <img id = "img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+    <a href="/requests">
+        <img id="img2" src="css/zaprosi.png" class="toggle-submenu">
+    </a>
+</header>
+
+<div id="submenu">
+    <ul>
+        <!--TODO-->
+    </ul>
+</div>
+
+<div id="container">
+    <div id="table">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Префикс</th>
+                <th>Улица</th>
+                <th>Дом</th>
+                <th>Квартира</th>
+                <th>Телефон</th>
+            </tr>
+            </thead>
+            <tbody data-table-type="allocation">
+            <tr th:each="allocation : ${allocations}" th:data-id="${allocation.id}">
+                <td th:text="${allocation.id}"></td>
+                <td th:text="${allocation.pref}"></td>
+                <td th:text="${allocation.street}"></td>
+                <td th:text="${allocation.house}"></td>
+                <td th:text="${allocation.room}"></td>
+                <td th:text="${allocation.phone}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="input">
+        <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+        <button type="button" onclick="ShowEditForm()">Изменить</button>
+        <button type="button" onclick="ShowCreateForm()">Создать</button>
+    </div>
+
+    <!--Форма изменения-->
+    <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
+        <h1>Изменение Местоположения</h1>
+
+        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
+
+        <label for="edit_pref">Префикс:</label>
+        <input type="text" id="edit_pref" name="pref" placeholder="Префикс">
+
+        <label for="edit_street">Улица:</label>
+        <input type="text" id="edit_street" name="street" placeholder="Улица">
+
+        <label for="edit_house">Дом:</label>
+        <input type="text" id="edit_house" name="house" placeholder="Дом">
+
+        <label for="edit_room">Помещение:</label>
+        <input type="text" id="edit_room" name="room" placeholder="Квартира">
+
+        <label for="edit_phone">Телефон:</label>
+        <input type="text" id="edit_phone" name="phone" placeholder="Телефон">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма создания-->
+    <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
+        <h1>Создание Местоположения</h1>
+
+        <label for="create_pref">Префикс:</label>
+        <input type="text" id="create_pref" name="pref" placeholder="Префикс">
+
+        <label for="create_street">Улица:</label>
+        <input type="text" id="create_street" name="street" placeholder="Улица">
+
+        <label for="create_house">Дом:</label>
+        <input type="text" id="create_house" name="house" placeholder="Дом">
+
+        <label for="create_room">Квартира:</label>
+        <input type="text" id="create_room" name="room" placeholder="Квартира">
+
+        <label for="create_phone">Помещение:</label>
+        <input type="text" id="create_phone" name="phone" placeholder="Телефон">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма удаления-->
+    <div id="deleteForm">
+        <h1>Удаление Местоположения</h1>
+
+        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
+
+        <button type="button" onclick="submitDeleteForm()">Удалить</button>
+    </div>
+</div>
+
+</body>
+</html>

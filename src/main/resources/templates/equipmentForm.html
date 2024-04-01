@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Управление Оборудованием</title>
+    <link rel="stylesheet" type="text/css" href="form.css">
+    <script th:inline="javascript" src="Equipment.js"></script>
+    <script th:inline="javascript" src="ToggleMenu.js"></script>
+    <script th:inline="javascript" src="Listener.js"></script>
+</head>
+
+<body>
+
+<header>
+    <img src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+</header>
+
+<div id="submenu">
+    <ul>
+        <!--TODO-->
+    </ul>
+</div>
+
+<div id="container">
+    <div id="table">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID типа оборудования</th>
+                <th>Инвентарный номер</th>
+                <th>П/И</th>
+                <th>Примечание</th>
+            </tr>
+            </thead>
+            <tbody data-table-type="equipment">
+            <tr th:each="equipment : ${Equipment}" th:data-id="${equipment.id}">
+                <td th:text="${equipment.id}"></td>
+                <td th:text="${equipment.id_equipmentType}"></td>
+                <td th:text="${equipment.inv_number}"></td>
+                <td th:text="${equipment.p_i}"></td>
+                <td th:text="${equipment.note}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="input">
+        <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+        <button type="button" onclick="ShowEditForm()">Изменить</button>
+        <button type="button" onclick="ShowCreateForm()">Создать</button>
+    </div>
+
+    <!--Форма изменения-->
+    <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
+        <h1>Изменение Оборудования</h1>
+
+        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
+
+        <label for="edit_idEquipmentType">Тип оборудования:</label>
+        <select id="edit_idEquipmentType" name="idEquipmentType">
+            <option th:each="type : ${equipmentTypes}" th:value="${type.id}" th:text="
+            ${type.id} + ' ' +
+            ${type.category} + ' ' +
+            ${type.name} + ' ' +
+            ${type.characteristic}"></option>
+        </select>
+
+        <label for="edit_invNumber">Инвентарный номер:</label>
+        <input type="number" id="edit_invNumber" name="invNumber" placeholder="Инвентарный номер">
+
+        <label for="edit_p_i">П/И:</label>
+        <input type="number" id="edit_p_i" name="p_i" placeholder="П/И">
+
+        <label for="edit_note">Примечание:</label>
+        <input type="text" id="edit_note" name="note" placeholder="Примечание">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма создания-->
+    <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
+        <h1>Создание Оборудования</h1>
+
+        <label for="create_idEquipmentType">Тип оборудования:</label>
+        <select id="create_idEquipmentType" name="idEquipmentType">
+            <option th:each="type : ${equipmentTypes}" th:value="${type.id}" th:text="
+            ${type.id} + ' ' +
+            ${type.category} + ' ' +
+            ${type.name} + ' ' +
+            ${type.characteristic}"></option>
+        </select>
+
+        <label for="create_invNumber">Инвентарный номер:</label>
+        <input type="number" id="create_invNumber" name="invNumber" placeholder="Инвентарный номер">
+
+        <label for="create_pI">П/И:</label>
+        <input type="number" id="create_pI" name="p_i" placeholder="П/И">
+
+        <label for="create_note">Примечание:</label>
+        <input type="text" id="create_note" name="note" placeholder="Примечание">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма удаления-->
+    <div id="deleteForm">
+        <h1>Удаление Оборудования</h1>
+
+        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
+
+        <button type="button" onclick="submitDeleteForm()">Удалить</button>
+    </div>
+</div>
+
+</body>
+</html>

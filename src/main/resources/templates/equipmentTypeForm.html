@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Управление Типами Оборудования</title>
+    <link rel="stylesheet" type="text/css" href="form.css">
+    <script th:inline="javascript" src="EquipmentType.js"></script>
+    <script th:inline="javascript" src="ToggleMenu.js"></script>
+    <script th:inline="javascript" src="Listener.js"></script>
+</head>
+
+<body>
+
+<header>
+    <img src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+</header>
+
+<div id="submenu">
+    <ul>
+        <!--TODO-->
+    </ul>
+</div>
+
+<div id="container">
+    <div id="table">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Категория</th>
+                <th>Название</th>
+                <th>Характеристики</th>
+            </tr>
+            </thead>
+            <tbody data-table-type="equipmentType">
+            <tr th:each="equipmentType : ${equipmentTypes}" th:data-id="${equipmentType.id}">
+                <td th:text="${equipmentType.id}"></td>
+                <td th:text="${equipmentType.category}"></td>
+                <td th:text="${equipmentType.name}"></td>
+                <td th:text="${equipmentType.characteristic}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="input">
+        <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+        <button type="button" onclick="ShowEditForm()">Изменить</button>
+        <button type="button" onclick="ShowCreateForm()">Создать</button>
+    </div>
+
+    <!--Форма изменения-->
+    <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
+        <h1>Изменение Типа Оборудования</h1>
+
+        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
+
+        <label for="edit_category">Категория:</label>
+        <input type="text" id="edit_category" name="category" placeholder="Категория">
+
+        <label for="edit_name">Название:</label>
+        <input type="text" id="edit_name" name="name" placeholder="Название">
+
+        <label for="edit_characteristic">Характеристики:</label>
+        <input type="text" id="edit_characteristic" name="characteristic" placeholder="Характеристики">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма создания-->
+    <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
+        <h1>Создание Типа Оборудования</h1>
+
+        <label for="create_category">Категория:</label>
+        <input type="text" id="create_category" name="category" placeholder="Категория">
+
+        <label for="create_name">Название:</label>
+        <input type="text" id="create_name" name="name" placeholder="Название">
+
+        <label for="create_characteristic">Характеристики:</label>
+        <input type="text" id="create_characteristic" name="characteristic" placeholder="Характеристики">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <!--Форма удаления-->
+    <div id="deleteForm">
+        <h1>Удаление Типа Оборудования</h1>
+
+        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
+
+        <button type="button" onclick="submitDeleteForm()">Удалить</button>
+    </div>
+</div>
+
+</body>
+</html>
