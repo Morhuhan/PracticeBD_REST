@@ -1,7 +1,9 @@
 package BD.practiceBD_REST.DAOs;
 
 import BD.practiceBD_REST.Objects.Equipment;
+import BD.practiceBD_REST.Objects.Seat;
 import BD.practiceBD_REST.RowMappers.EquipmentRowMapper;
+import BD.practiceBD_REST.RowMappers.SeatRowMapper;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.dao.DataAccessException;
@@ -51,5 +53,10 @@ public class EquipmentDAO {
                 equipment.getNote());
 
         return Objects.requireNonNullElse(result, 0);
+    }
+
+    public List<Equipment> getListFaultyEquipment() throws DataAccessException {
+        String sql = "SELECT * FROM request_получить_неиспр_обор()";
+        return jdbcTemplate.query(sql, new EquipmentRowMapper());
     }
 }

@@ -5,21 +5,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Управление Типами Оборудования</title>
-    <link rel="stylesheet" type="text/css" href="form.css">
-    <script th:inline="javascript" src="EquipmentType.js"></script>
-    <script th:inline="javascript" src="ToggleMenu.js"></script>
-    <script th:inline="javascript" src="Listener.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/form.css">
+    <script th:inline="javascript" src="SubmitFormFunctions/EquipmentType.js"></script>
+    <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
+    <script th:inline="javascript" src="Utility/Listener.js"></script>
 </head>
 
 <body>
 
 <header>
-    <img src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+    <img id = "img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+    <a href="/requests">
+        <img id="img2" src="css/zaprosi.png" class="toggle-submenu">
+    </a>
 </header>
 
 <div id="submenu">
     <ul>
-        <!--TODO-->
+        <li><a href="/allocation">Allocation</a></li>
+        <li><a href="/classroom">Classroom</a></li>
+        <li><a href="/equipment">Equipment</a></li>
+        <li><a href="/equipmentType">Equipment Type</a></li>
+        <li><a href="/maintenance">Maintenance</a></li>
+        <li><a href="/seat">Seat</a></li>
     </ul>
 </div>
 

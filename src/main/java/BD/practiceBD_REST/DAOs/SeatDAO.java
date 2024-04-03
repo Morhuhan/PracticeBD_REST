@@ -54,4 +54,14 @@ public class SeatDAO {
 
         return Objects.requireNonNullElse(result, 0);
     }
+
+    public List<Seat> getListFaultySeats() throws DataAccessException {
+        String sql = "SELECT * FROM request_получить_неиспр_уч_места()";
+        return jdbcTemplate.query(sql, new SeatRowMapper());
+    }
+
+    public List<Seat> getListSeatsByEquipmentType(int id) throws DataAccessException {
+        String sql = "SELECT * FROM request_получить_уч_места_по_типу_обор(?)";
+        return jdbcTemplate.query(sql, new SeatRowMapper(), id);
+    }
 }

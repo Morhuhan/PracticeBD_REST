@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Setter
 @Getter
@@ -197,6 +199,37 @@ public class JsonController {
             return ResponseEntity.ok().build();
         } catch (DataAccessException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    ////////// REQUESTS
+    @PostMapping("/admin/ListFaultySeats")
+    public ResponseEntity<List<Seat>> showListFaultySeats() {
+        try {
+            List<Seat> seats = mainService.showListFaultySeats();
+            return new ResponseEntity<>(seats, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/admin/ListFaultyEquipment")
+    public ResponseEntity<List<Equipment>> showListFaultyEquipment() {
+        try {
+            List<Equipment> Equipment = mainService.showListFaultyEquipment();
+            return new ResponseEntity<>(Equipment, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/admin/{id_equipmentType}/ListSeatsByEquipmentType")
+    public ResponseEntity<List<Seat>> showSeatsByEquipmentType(@PathVariable("id_equipmentType") int id_equipmentType) {
+        try {
+            List<Seat> seats = mainService.showSeatsByEquipmentType(id_equipmentType);
+            return new ResponseEntity<>(seats, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

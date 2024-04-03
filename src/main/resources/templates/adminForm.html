@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Списки оборудования</title>
+    <script src="Requests/Admin.js"></script>
+</head>
+<body>
+
+<h2>Список необорудованных учебных мест или учебных мест с неисправным оборудованием</h2>
+<button type="button" onclick="ListFaultySeats();">Показать список</button>
+
+<h2>Список неисправного оборудования</h2>
+<button type="button" onclick="ListFaultyEquipment();">Показать список</button>
+
+<h2>Список учебных мест с заданными характеристиками оборудования</h2>
+
+<label for="idEquipmentType">Тип оборудования:</label>
+<select id="idEquipmentType" name="idEquipmentType">
+    <option th:each="type : ${equipmentTypes}" th:value="${type.id}" th:text="
+            ${type.id} + ' ' +
+            ${type.category} + ' ' +
+            ${type.name} + ' ' +
+            ${type.characteristic}"></option>
+</select>
+
+<button type="button" onclick="ListSeatsByEquipmentType();">Показать список</button>
+
+</body>
+</html>
