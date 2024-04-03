@@ -26,6 +26,12 @@ header {
     cursor: pointer;
 }
 
+#img3 {
+    height: 50px;
+    width: auto;
+    cursor: pointer;
+}
+
 #container{
     margin-top: 20px;
     display: flex;

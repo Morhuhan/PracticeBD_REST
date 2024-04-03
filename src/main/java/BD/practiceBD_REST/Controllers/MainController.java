@@ -59,8 +59,11 @@ public class MainController {
         return "seatForm.html";
     }
 
-    ////////// Запросы
+    ////////// REQUESTS
 
-
-
+    @GetMapping("/admin")
+    public String showAdminForm(Model model) {
+        model.addAttribute("equipmentTypes", mainService.getAllEquipmentTypes());
+        return "adminForm.html";
+    }
 }

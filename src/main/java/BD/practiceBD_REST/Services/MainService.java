@@ -129,4 +129,16 @@ public class MainService {
         equipmentTypeDAO.edit(equipmentType);
     }
 
+    // Requests
+    public List<Seat> showListFaultySeats() throws DataAccessException {
+        return seatDAO.getListFaultySeats();
+    }
+
+    public List<Equipment> showListFaultyEquipment() throws DataAccessException {
+        return equipmentDAO.getListFaultyEquipment();
+    }
+
+    public List<Seat> showSeatsByEquipmentType(int id) throws DataAccessException {
+        return seatDAO.getListSeatsByEquipmentType(id);
+    }
 }
