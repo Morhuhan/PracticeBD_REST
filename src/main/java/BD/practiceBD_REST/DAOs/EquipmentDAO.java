@@ -23,9 +23,15 @@ public class EquipmentDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Equipment> getAll() throws DataAccessException {
-        String sql = "SELECT * FROM оборудование_получить_все()";
-        return jdbcTemplate.query(sql, new EquipmentRowMapper());
+    public List<Equipment> getAll(int count, int page) throws DataAccessException {
+        String sql = "SELECT * FROM оборудование_получить_все(?, ?)";
+        return jdbcTemplate.query(sql, new EquipmentRowMapper(), count, page);
+    }
+
+    public int count() throws DataAccessException {
+        String sql = "SELECT COUNT(*) FROM public.\"оборудование\"";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class);
+        return count;
     }
 
     public void delete(int id) throws DataAccessException {

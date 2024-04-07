@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Setter
@@ -139,6 +140,22 @@ public class JsonController {
             return ResponseEntity.ok().build();
         } catch (DataAccessException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/equipment/get")
+    public ResponseEntity<?> getEquipmentToPage(@RequestBody Map<String, Object> pageRequest) {
+        try {
+            int page = (int) pageRequest.get("page");
+            int itemsPerPage = (int) pageRequest.get("itemsPerPage");
+
+            // Получаем данные оборудования для страницы
+            List<Equipment> equipmentList = mainService.getAllEquipment(itemsPerPage, page);
+            // Возвращаем данные и статус OK
+            return ResponseEntity.ok(equipmentList);
+        } catch (Exception e) {
+            // В случае ошибки возвращаем статус Internal Server Error
+            return ResponseEntity.internalServerError().body("Ошибка при получении данных: " + e.getMessage());
         }
     }
 

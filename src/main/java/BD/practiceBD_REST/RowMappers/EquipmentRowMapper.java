@@ -14,7 +14,7 @@ public class EquipmentRowMapper implements RowMapper<Equipment> {
         equipment.setId(rs.getInt("ид"));
         equipment.setId_equipmentType(rs.getInt("ид_типа_оборудования"));
         equipment.setInv_number(rs.getInt("инвентарный_номер"));
-        equipment.setP_i(rs.getInt("признак_исправности"));
+        equipment.setP_i(rs.getShort("признак_исправности"));
         equipment.setNote(rs.getString("примечание"));
         return equipment;
     }

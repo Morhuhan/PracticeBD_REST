@@ -21,7 +21,7 @@ public class MainController {
     @GetMapping("/maintenance")
     public String showServiceForm(Model model) {
         model.addAttribute("seats", mainService.getAllSeats());
-        model.addAttribute("Equipment", mainService.getAllEquipment());
+        model.addAttribute("Equipment", mainService.getAllEquipment(10, 1));
         model.addAttribute("maintenances", mainService.getAllMaintenances());
         return "maintenanceForm.html";
     }
@@ -41,7 +41,10 @@ public class MainController {
 
     @GetMapping("/equipment")
     public String showEquipmentForm(Model model) {
-        model.addAttribute("Equipment", mainService.getAllEquipment());
+        int countOnPage = 10;
+        model.addAttribute("Equipment", mainService.getAllEquipment(countOnPage, 1));
+        model.addAttribute("Equipment_count_on_page", countOnPage);
+        model.addAttribute("Equipment_count_in_table", mainService.getEquipmentCount());
         model.addAttribute("equipmentTypes", mainService.getAllEquipmentTypes());
         return "equipmentForm.html";
     }

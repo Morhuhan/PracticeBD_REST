@@ -1,6 +1,5 @@
 package BD.practiceBD_REST.RowMappers;
 
-import BD.practiceBD_REST.Objects.Classroom;
 import BD.practiceBD_REST.Objects.Seat;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -17,7 +16,6 @@ public class SeatRowMapper implements RowMapper<Seat> {
         seat.setWS_name(rs.getString("имя_рабочей_станции"));
         seat.setIp(rs.getString("ip_адрес"));
         seat.setNote(rs.getString("примечание"));
-
         return seat;
     }
 }

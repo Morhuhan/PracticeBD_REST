@@ -1,5 +1,9 @@
 function submitDeleteForm() {
     var equipmentId = document.getElementById("IdToDelete").value;
+
+    var totalItems = parseInt(document.getElementById('equipmentCount').getAttribute('data-count'), 10);
+    var itemsPerPage = parseInt(document.getElementById('equipmentCountOnPage').getAttribute('data-count-on-page'), 10);
+
     console.log("DELETE");
     if (confirm("Вы уверены, что хотите удалить оборудование с ID " + equipmentId + "?")) {
         fetch('/equipment/' + equipmentId + '/delete', {
@@ -11,6 +15,15 @@ function submitDeleteForm() {
                 if (row) {
                     row.remove();
                 }
+
+                // Получаем DOM-элемент, который содержит атрибут 'data-count'
+                var totalItemsElement = document.getElementById('equipmentCount');
+
+                totalItems--;
+
+                // Обновляем атрибут 'data-count' с новым количеством элементов
+                totalItemsElement.setAttribute('data-count', totalItems.toString());
+
                 alert("Оборудование успешно удалено.");
             } else if (response.status === 500) {
                 response.text().then(errorMessage => {
@@ -84,6 +97,9 @@ function submitCreateForm(event) {
     var p_i = document.getElementById('create_pI').value;
     var note = document.getElementById('create_note').value;
 
+    var totalItems = parseInt(document.getElementById('equipmentCount').getAttribute('data-count'), 10);
+    var itemsPerPage = parseInt(document.getElementById('equipmentCountOnPage').getAttribute('data-count-on-page'), 10);
+
     var equipment = {
         id_equipmentType: id_equipmentType,
         inv_number: inv_number,
@@ -116,7 +132,21 @@ function submitCreateForm(event) {
     .then(id => {
         if (id) {
             equipment.id = id;
-            addRowToTable(equipment);
+
+            // Получаем DOM-элемент, который содержит атрибут 'data-count'
+            var equipmentCountElement = document.getElementById('equipmentCount');
+
+            // Увеличиваем totalItems на 1
+            totalItems++;
+
+            // Обновляем атрибут 'data-count' с новым количеством элементов
+            equipmentCountElement.setAttribute('data-count', totalItems.toString());
+
+            if (totalItems <= itemsPerPage) {
+                addRowToTable(equipment);
+            } else {
+                updatePaginationPanelToCreate(); // Обновляем панель навигации
+            }
         }
     })
     .catch(error => {
@@ -129,7 +159,7 @@ function submitCreateForm(event) {
 function addRowToTable(equipment) {
     var tableBody = document.querySelector('#table tbody');
 
-    var newRow = tableBody.insertRow(0);
+    var newRow = tableBody.insertRow(-1);
 
     var cellId = newRow.insertCell(0);
     var cellIdEquipmentType = newRow.insertCell(1);
@@ -145,6 +175,29 @@ function addRowToTable(equipment) {
     cellNote.textContent = equipment.note;
 }
 
+
+function updatePaginationPanelToCreate() {
+    var totalItems = parseInt(document.getElementById('equipmentCount').getAttribute('data-count'), 10);
+    var itemsPerPage = parseInt(document.getElementById('equipmentCountOnPage').getAttribute('data-count-on-page'), 10);
+    var paginationPanel = document.getElementById('paginationPanel');
+
+    // Очищаем текущую панель навигации
+    paginationPanel.innerHTML = '';
+
+    // Вычисляем новое количество страниц
+    var pageCount = Math.ceil(totalItems / itemsPerPage);
+
+    // Создаем кнопки для каждой страницы
+    for (let i = 1; i <= pageCount; i++) {
+        var button = document.createElement('button');
+        button.innerText = i;
+        button.addEventListener('click', function() {
+            fetchNextEquipmentPage(i, itemsPerPage);
+        });
+        paginationPanel.appendChild(button);
+    }
+}
+
 function updateTableRow(rowId, equipment) {
     var row = document.querySelector(`tr[data-id="${rowId}"]`);
     if (row) {
@@ -153,4 +206,92 @@ function updateTableRow(rowId, equipment) {
         row.cells[3].textContent = equipment.p_i;
         row.cells[4].textContent = equipment.note;
     }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    var totalItems = parseInt(document.getElementById('equipmentCount').getAttribute('data-count'), 10);
+    var itemsPerPage = parseInt(document.getElementById('equipmentCountOnPage').getAttribute('data-count-on-page'), 10);
+    var paginationPanel = document.getElementById('paginationPanel');
+
+    // Вычисляем количество страниц
+    var pageCount = Math.ceil(totalItems / itemsPerPage);
+
+    // Создаем кнопки для каждой страницы
+    for (let i = 1; i <= pageCount; i++) {
+        var button = document.createElement('button');
+        button.innerText = i;
+        button.addEventListener('click', function() {
+            fetchNextEquipmentPage(i, itemsPerPage);
+        });
+        paginationPanel.appendChild(button);
+    }
+});
+
+function fetchNextEquipmentPage(pageNumber, itemsPerPage) {
+    // Создаем объект с данными для отправки
+    var requestData = {
+        page: pageNumber,
+        itemsPerPage: itemsPerPage
+    };
+
+    // Отправляем запрос на сервер
+    fetch('/equipment/get', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData) // Преобразуем данные в строку JSON
+    })
+    .then(response => {
+        if (response.ok) {
+            response.json().then(data => {
+                // Обновляем таблицу данными, полученными с сервера
+                updateTableWithNewData(data);
+            });
+        } else {
+            alert("Ошибка при получении данных оборудования.");
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных оборудования:', error);
+        alert("Ошибка при получении данных оборудования: " + error.message);
+    });
+}
+
+function updateTableWithNewData(data) {
+    var tableBody = document.querySelector('#table tbody[data-table-type="equipment"]');
+    tableBody.innerHTML = ''; // Очищаем текущее содержимое tbody
+
+    // Проходимся по каждому элементу массива данных, полученных с сервера
+    data.forEach(function(equipment) {
+        // Создаем строку таблицы
+        var row = document.createElement('tr');
+        row.setAttribute('data-id', equipment.id);
+
+        // Создаем и заполняем ячейки для каждого поля оборудования
+        var idCell = document.createElement('td');
+        idCell.textContent = equipment.id;
+        row.appendChild(idCell);
+
+        var typeIdCell = document.createElement('td');
+        typeIdCell.textContent = equipment.id_equipmentType;
+        row.appendChild(typeIdCell);
+
+        var invNumberCell = document.createElement('td');
+        invNumberCell.textContent = equipment.inv_number;
+        row.appendChild(invNumberCell);
+
+        var piCell = document.createElement('td');
+        piCell.textContent = equipment.p_i;
+        row.appendChild(piCell);
+
+        var noteCell = document.createElement('td');
+        noteCell.textContent = equipment.note;
+        row.appendChild(noteCell);
+
+        // Добавляем строку в tbody
+        tableBody.appendChild(row);
+    });
 }

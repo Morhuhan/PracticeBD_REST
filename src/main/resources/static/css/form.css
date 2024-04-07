@@ -184,3 +184,6 @@ button[type="button"]:hover {
     background-color: #dcdcdc;
 }
 
+#paginationPanel {
+    margin-top: 10px;
+}

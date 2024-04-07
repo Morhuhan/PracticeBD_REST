@@ -1,10 +1,5 @@
 package BD.practiceBD_REST.Objects;
-
-
-import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +14,7 @@ public class Equipment {
 
     private int inv_number;
 
-    private int p_i;
+    private Short p_i;
 
     private String note;
 }
