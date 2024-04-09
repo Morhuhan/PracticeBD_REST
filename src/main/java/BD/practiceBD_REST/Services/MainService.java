@@ -62,8 +62,8 @@ public class MainService {
     }
 
     // Methods for Equipment
-    public List<Equipment> getAllEquipment(int count, int page) throws DataAccessException {
-        return equipmentDAO.getAll(count, page);
+    public List<Equipment> getAllEquipment() throws DataAccessException {
+        return equipmentDAO.getAll();
     }
 
     public int getEquipmentCount() throws DataAccessException {

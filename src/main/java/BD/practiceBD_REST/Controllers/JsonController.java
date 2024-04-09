@@ -150,7 +150,7 @@ public class JsonController {
             int itemsPerPage = (int) pageRequest.get("itemsPerPage");
 
             // Получаем данные оборудования для страницы
-            List<Equipment> equipmentList = mainService.getAllEquipment(itemsPerPage, page);
+            List<Equipment> equipmentList = mainService.getAllEquipment();
             // Возвращаем данные и статус OK
             return ResponseEntity.ok(equipmentList);
         } catch (Exception e) {
