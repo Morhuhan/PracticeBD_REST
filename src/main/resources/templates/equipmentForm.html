@@ -8,14 +8,14 @@
     <link rel="stylesheet" type="text/css" href="css/form.css">
     <script th:inline="javascript" src="SubmitFormFunctions/Equipment.js"></script>
     <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
-    <script th:inline="javascript" src="Utility/Listener.js"></script>
 
-    <!--Объявялем массив чтобы использовать его в JS-->
+    <!-- Шлоабльные переменные JS-->
     <script th:inline="javascript">
         var Equipment = /*[[${Equipment}]]*/ null;
+        var currentPage = 1;
+        var totalPages = 1;
     </script>
 
-    <script> var currentPage = 1 </script>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
         <!-- Выбор количества строк на странице -->
         <div>
             <label for="itemsPerPage">Строк на странице:</label>
-            <select id="itemsPerPage" th:attr="data=${itemsPerPage}" onchange="initializePagination(); changeEquipmentPerPage();">
+            <select id="itemsPerPage" onchange="UpdateNavigationPanel(); GetEquipmentPage(1, parseInt(itemsPerPage));">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="15">15</option>
@@ -61,7 +61,7 @@
 
             <div id="forms">
                 <!--Форма изменения-->
-                <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
+                <form id="editForm" onsubmit="SubmitEditForm(event); return false;" method="post">
                     <h1>Изменение Оборудования</h1>
 
                     <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
@@ -88,7 +88,7 @@
                 </form>
 
                 <!--Форма создания-->
-                <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
+                <form id="createForm" onsubmit="SubmitCreateForm(event); return false;" method="post">
                     <h1>Создание Оборудования</h1>
 
                     <label for="create_idEquipmentType">Тип оборудования:</label>
@@ -118,7 +118,7 @@
 
                     <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
 
-                    <button type="button" onclick="submitDeleteForm()">Удалить</button>
+                    <button type="button" onclick="SubmitDeleteForm()">Удалить</button>
                 </div>
             </div>
 
@@ -139,8 +139,6 @@
                 </tbody>
             </table>
 
-            <!-- Скрытые элементы для передачи данных в JavaScript -->
-            <div id="totalItems" th:attr="data=${totalItems}" style="display: none;"></div>
             <!-- Место под панель навигации -->
             <div id="navigationPanel"></div>
         </div>
