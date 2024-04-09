@@ -2,147 +2,144 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Управление Оборудованием</title>
-    <link rel="stylesheet" type="text/css" href="css/form.css">
-    <script th:inline="javascript" src="SubmitFormFunctions/Equipment.js"></script>
-    <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <title>Управление Оборудованием</title>
+        <link rel="stylesheet" type="text/css" href="css/form.css">
+        <script th:inline="javascript" src="SubmitFormFunctions/Equipment.js"></script>
+        <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
 
-    <!-- Шлоабльные переменные JS-->
-    <script th:inline="javascript">
-        var Equipment = /*[[${Equipment}]]*/ null;
-        var currentPage = 1;
-        var totalPages = 1;
-    </script>
+        <!-- Шлоабльные переменные JS-->
+        <script th:inline="javascript">
+            var Equipment = /*[[${Equipment}]]*/ null;
+            var currentPage = 1;
+            var totalPages = 1;
+        </script>
+    </head>
 
-</head>
-
-<body>
-
-    <header>
-        <img id = "img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
-        <a href="/requests">
-            <img id="img2" src="css/zaprosi.png" class="toggle-submenu">
-        </a>
-        <!-- Выбор количества строк на странице -->
-        <div>
-            <label for="itemsPerPage">Строк на странице:</label>
-            <select id="itemsPerPage" onchange="UpdateNavigationPanel(); GetEquipmentPage(1, parseInt(itemsPerPage));">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="100" selected>100</option>
-            </select>
-        </div>
-    </header>
-
-    <div id="submenu">
-        <ul>
-            <li><a href="/allocation">Allocation</a></li>
-            <li><a href="/classroom">Classroom</a></li>
-            <li><a href="/equipment">Equipment</a></li>
-            <li><a href="/equipmentType">Equipment Type</a></li>
-            <li><a href="/maintenance">Maintenance</a></li>
-            <li><a href="/seat">Seat</a></li>
-        </ul>
-    </div>
-
-    <div id="container1">
-
-        <div id="container2">
-
-            <div id="input">
-                <button type="button" onclick="ShowDeleteForm()">Удалить</button>
-                <button type="button" onclick="ShowEditForm()">Изменить</button>
-                <button type="button" onclick="ShowCreateForm()">Создать</button>
+    <body>
+        <header>
+            <img id = "img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+            <a href="/requests">
+                <img id="img2" src="css/zaprosi.png" class="toggle-submenu">
+            </a>
+            <!-- Выбор количества строк на странице -->
+            <div>
+                <label for="itemsPerPage">Строк на странице:</label>
+                <select id="itemsPerPage" onchange="UpdateNavigationPanel(); GetEquipmentPage(1, parseInt(itemsPerPage));">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="100" selected>100</option>
+                </select>
             </div>
+        </header>
 
-            <div id="forms">
-                <!--Форма изменения-->
-                <form id="editForm" onsubmit="SubmitEditForm(event); return false;" method="post">
-                    <h1>Изменение Оборудования</h1>
+        <div id="submenu">
+            <ul>
+                <li><a href="/allocation">Allocation</a></li>
+                <li><a href="/classroom">Classroom</a></li>
+                <li><a href="/equipment">Equipment</a></li>
+                <li><a href="/equipmentType">Equipment Type</a></li>
+                <li><a href="/maintenance">Maintenance</a></li>
+                <li><a href="/seat">Seat</a></li>
+            </ul>
+        </div>
 
-                    <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
+        <div id="container1">
 
-                    <label for="edit_idEquipmentType">Тип оборудования:</label>
-                    <select id="edit_idEquipmentType" name="idEquipmentType">
-                        <option th:each="type : ${equipmentTypes}" th:value="${type.id}" th:text="
-                        ${type.id} + ' ' +
-                        ${type.category} + ' ' +
-                        ${type.name} + ' ' +
-                        ${type.characteristic}"></option>
-                    </select>
+            <div id="container2">
 
-                    <label for="edit_invNumber">Инвентарный номер:</label>
-                    <input type="number" id="edit_invNumber" name="invNumber" placeholder="Инвентарный номер">
-
-                    <label for="edit_pI">П/И:</label>
-                    <input type="number" id="edit_pI" name="p_i" placeholder="П/И">
-
-                    <label for="edit_note">Примечание:</label>
-                    <input type="text" id="edit_note" name="note" placeholder="Примечание">
-
-                    <button type="submit">Отправить</button>
-                </form>
-
-                <!--Форма создания-->
-                <form id="createForm" onsubmit="SubmitCreateForm(event); return false;" method="post">
-                    <h1>Создание Оборудования</h1>
-
-                    <label for="create_idEquipmentType">Тип оборудования:</label>
-                    <select id="create_idEquipmentType" name="idEquipmentType">
-                        <option th:each="type : ${equipmentTypes}" th:value="${type.id}" th:text="
-                        ${type.id} + ' ' +
-                        ${type.category} + ' ' +
-                        ${type.name} + ' ' +
-                        ${type.characteristic}"></option>
-                    </select>
-
-                    <label for="create_invNumber">Инвентарный номер:</label>
-                    <input type="number" id="create_invNumber" name="invNumber" placeholder="Инвентарный номер">
-
-                    <label for="create_pI">П/И:</label>
-                    <input type="number" id="create_pI" name="p_i" placeholder="П/И">
-
-                    <label for="create_note">Примечание:</label>
-                    <input type="text" id="create_note" name="note" placeholder="Примечание">
-
-                    <button type="submit">Отправить</button>
-                </form>
-
-                <!--Форма удаления-->
-                <div id="deleteForm">
-                    <h1>Удаление Оборудования</h1>
-
-                    <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
-
-                    <button type="button" onclick="SubmitDeleteForm()">Удалить</button>
+                <div id="input">
+                    <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+                    <button type="button" onclick="ShowEditForm()">Изменить</button>
+                    <button type="button" onclick="ShowCreateForm()">Создать</button>
                 </div>
+
+                <div id="forms">
+                    <!--Форма изменения-->
+                    <form id="editForm" onsubmit="SubmitEditForm(event); return false;" method="post">
+                        <h1>Изменение Оборудования</h1>
+
+                        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
+
+                        <label for="edit_idEquipmentType">Тип оборудования:</label>
+                        <select id="edit_idEquipmentType" name="idEquipmentType">
+                            <option th:each="type : ${equipmentTypes}" th:value="${type.id}" th:text="
+                            ${type.id} + ' ' +
+                            ${type.category} + ' ' +
+                            ${type.name} + ' ' +
+                            ${type.characteristic}"></option>
+                        </select>
+
+                        <label for="edit_invNumber">Инвентарный номер:</label>
+                        <input type="number" id="edit_invNumber" name="invNumber" placeholder="Инвентарный номер">
+
+                        <label for="edit_pI">П/И:</label>
+                        <input type="number" id="edit_pI" name="p_i" placeholder="П/И">
+
+                        <label for="edit_note">Примечание:</label>
+                        <input type="text" id="edit_note" name="note" placeholder="Примечание">
+
+                        <button type="submit">Отправить</button>
+                    </form>
+
+                    <!--Форма создания-->
+                    <form id="createForm" onsubmit="SubmitCreateForm(event); return false;" method="post">
+                        <h1>Создание Оборудования</h1>
+
+                        <label for="create_idEquipmentType">Тип оборудования:</label>
+                        <select id="create_idEquipmentType" name="idEquipmentType">
+                            <option th:each="type : ${equipmentTypes}" th:value="${type.id}" th:text="
+                            ${type.id} + ' ' +
+                            ${type.category} + ' ' +
+                            ${type.name} + ' ' +
+                            ${type.characteristic}"></option>
+                        </select>
+
+                        <label for="create_invNumber">Инвентарный номер:</label>
+                        <input type="number" id="create_invNumber" name="invNumber" placeholder="Инвентарный номер">
+
+                        <label for="create_pI">П/И:</label>
+                        <input type="number" id="create_pI" name="p_i" placeholder="П/И">
+
+                        <label for="create_note">Примечание:</label>
+                        <input type="text" id="create_note" name="note" placeholder="Примечание">
+
+                        <button type="submit">Отправить</button>
+                    </form>
+
+                    <!--Форма удаления-->
+                    <div id="deleteForm">
+                        <h1>Удаление Оборудования</h1>
+
+                        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
+
+                        <button type="button" onclick="SubmitDeleteForm()">Удалить</button>
+                    </div>
+                </div>
+
             </div>
 
+            <div id="table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ID типа оборудования</th>
+                        <th>Инвентарный номер</th>
+                        <th>П/И</th>
+                        <th>Примечание</th>
+                    </tr>
+                    </thead>
+                    <tbody data-table-type="equipment">
+                    </tbody>
+                </table>
+
+                <!-- Место под панель навигации -->
+                <div id="navigationPanel"></div>
+            </div>
         </div>
-
-        <div id="table">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>ID типа оборудования</th>
-                    <th>Инвентарный номер</th>
-                    <th>П/И</th>
-                    <th>Примечание</th>
-                </tr>
-                </thead>
-                <tbody data-table-type="equipment">
-                </tbody>
-            </table>
-
-            <!-- Место под панель навигации -->
-            <div id="navigationPanel"></div>
-        </div>
-    </div>
-
-</body>
+    </body>
 </html>

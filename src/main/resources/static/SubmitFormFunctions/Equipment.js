@@ -27,20 +27,24 @@ function SubmitDeleteForm() {
 
                 // Удаляем элемент из таблицы на таймлиф шаблоне
                 var row = document.querySelector('tr[data-id="' + equipmentId + '"]');
-                row.remove();
 
-                var rowsOnCurrentPage = document.querySelectorAll('tr[data-id]').length;
+                // Если строка с другой страницы, то на шаблоне ничего не меняем, кроме панели навигации
+                if (row) {
+                    row.remove();
 
-                // Если мы были на крайней странице и удалили последнюю на ней строку, то переходим на предыдущуюю страницу
-                // Если и так были на первой странице, то ничего не делаем
-                if (currentPage === totalPages && rowsOnCurrentPage === 0 && currentPage > 1) {
-                    currentPage--;
-                    GetEquipmentPage(currentPage);
-                }
+                    var rowsOnCurrentPage = document.querySelectorAll('tr[data-id]').length;
 
-                // Если мы были не на крайней странице, переносим строку со следующей страницы, если она есть
-                if (currentPage < totalPages ) {
-                    MoveNextRowToCurrentPage();
+                    // Если мы были на крайней странице и удалили последнюю на ней строку, то переходим на предыдущуюю страницу
+                    // Если и так были на первой странице, то ничего не делаем
+                    if (currentPage === totalPages && rowsOnCurrentPage === 0 && currentPage > 1) {
+                        currentPage--;
+                        GetEquipmentPage(currentPage);
+                    }
+
+                    // Если мы были не на крайней странице, переносим строку со следующей страницы, если она есть
+                    if (currentPage < totalPages ) {
+                        MoveNextRowToCurrentPage();
+                    }
                 }
 
                 // Обновляем пагинацию
