@@ -43,13 +43,20 @@
 
         <div id="forms">
             <!-- Форма изменения -->
-            <form id="editForm" onsubmit="SubmitEditClassroomForm(event); return false;" method="post">
+            <form id="editForm" onsubmit="return validatePlaces() && SubmitEditClassroomForm(event);" method="post">
                 <h1>Изменение Класса</h1>
 
                 <input type="text" id="IdToEditClassroom" placeholder="Введите ID для изменения">
 
-                <label for="edit_id_allocation">ID Распределения:</label>
-                <input type="text" id="edit_id_allocation" name="id_allocation" placeholder="ID Распределения">
+                <label for="edit_id_allocation">Местоположение:</label>
+                <select id="edit_id_allocation" name="id_allocation" placeholder="ID Местоположения">
+                    <option th:each="allocation : ${allocations}" th:value="${allocation.id}" th:text="
+                            ${allocation.id} + ' ' +
+                            ${allocation.pref} + ' ' +
+                            ${allocation.street} + ' ' +
+                            ${allocation.house} + ' ' +
+                            ${allocation.room}"></option>
+                </select>
 
                 <label for="edit_current_num_of_places">Текущее Кол-во Мест:</label>
                 <input type="text" id="edit_current_num_of_places" name="current_num_of_places" placeholder="Текущее Кол-во Мест">
@@ -57,7 +64,7 @@
                 <label for="edit_max_num_of_places">Макс. Кол-во Мест:</label>
                 <input type="text" id="edit_max_num_of_places" name="max_num_of_places" placeholder="Макс. Кол-во Мест">
 
-                <label for="edit_department">Отдел:</label>
+                <label for="edit_department">Кафедра:</label>
                 <input type="text" id="edit_department" name="department" placeholder="Отдел">
 
                 <label for="edit_note">Примечание:</label>
@@ -67,11 +74,18 @@
             </form>
 
             <!-- Форма создания -->
-            <form id="createForm" onsubmit="SubmitCreateClassroomForm(event); return false;" method="post">
+            <form id="createForm" onsubmit="return validatePlaces() && SubmitCreateClassroomForm(event);" method="post">
                 <h1>Создание Класса</h1>
 
-                <label for="create_id_allocation">ID Распределения:</label>
-                <input type="text" id="create_id_allocation" name="id_allocation" placeholder="ID Распределения">
+                <label for="create_id_allocation">Местоположение:</label>
+                <select id="create_id_allocation" name="id_allocation" placeholder="ID Местоположения">
+                    <option th:each="allocation : ${allocations}" th:value="${allocation.id}" th:text="
+                            ${allocation.id} + ' ' +
+                            ${allocation.pref} + ' ' +
+                            ${allocation.street} + ' ' +
+                            ${allocation.house} + ' ' +
+                            ${allocation.room}"></option>
+                </select>
 
                 <label for="create_current_num_of_places">Текущее Кол-во Мест:</label>
                 <input type="text" id="create_current_num_of_places" name="current_num_of_places" placeholder="Текущее Кол-во Мест">
@@ -79,7 +93,7 @@
                 <label for="create_max_num_of_places">Макс. Кол-во Мест:</label>
                 <input type="text" id="create_max_num_of_places" name="max_num_of_places" placeholder="Макс. Кол-во Мест">
 
-                <label for="create_department">Отдел:</label>
+                <label for="create_department">Кафедра:</label>
                 <input type="text" id="create_department" name="department" placeholder="Отдел">
 
                 <label for="create_note">Примечание:</label>
@@ -104,7 +118,7 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>ID Распределения</th>
+                <th>ID Местоположения</th>
                 <th>Текущее Кол-во Мест</th>
                 <th>Макс. Кол-во Мест</th>
                 <th>Отдел</th>

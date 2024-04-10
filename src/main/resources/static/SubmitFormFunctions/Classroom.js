@@ -359,3 +359,15 @@ function SubmitCreateClassroomForm(event) {
         return;
     });
 }
+
+function validatePlaces() {
+    var currentNumOfPlaces = document.getElementById('create_current_num_of_places').value;
+    var maxNumOfPlaces = document.getElementById('create_max_num_of_places').value;
+
+    if (parseInt(currentNumOfPlaces) > parseInt(maxNumOfPlaces)) {
+        alert('Текущее количество мест не может быть больше максимального количества мест.');
+        return false;
+    }
+
+    return true;
+}

@@ -48,17 +48,27 @@
 
                 <input type="text" id="IdToEditMaintenance" placeholder="Введите ID для изменения">
 
-                <label for="edit_id_seat">ID Места:</label>
-                <input type="text" id="edit_id_seat" name="id_seat" placeholder="ID Места">
+                <label for="edit_id_seat">Учебное место:</label>
+                <select id="edit_id_seat" name="id_seat" placeholder="Учебное место">
+                    <option th:each="seat: ${seats}" th:value="${seat.id}" th:text="
+                            'ID: ' + ${seat.id} + ' ' +
+                            'Номер: ' + ${seat.number} + ' ' +
+                            'Имя: ' + ${seat.WS_name}"></option>
+                </select>
 
-                <label for="edit_id_equipment">ID Оборудования:</label>
-                <input type="text" id="edit_id_equipment" name="id_equipment" placeholder="ID Оборудования">
+                <label for="edit_id_equipment">Оборудование:</label>
+                <select id="edit_id_equipment" name="id_equipment" placeholder="Оборудование">
+                    <option th:each="equipment: ${Equipment}" th:value="${equipment.id}" th:text="
+                            'ID: ' + ${equipment.id} + ' ' +
+                            'Исправность: ' + ${equipment.p_i}"></option>
+                </select>
+
 
                 <label for="edit_installation_date">Дата Установки:</label>
-                <input type="text" id="edit_installation_date" name="installation_date" placeholder="Дата Установки">
+                <input type="text" id="edit_installation_date" name="installation_date" placeholder="YYYY-MM-DD" onblur="validateDate(this)">
 
                 <label for="edit_removal_date">Дата Удаления:</label>
-                <input type="text" id="edit_removal_date" name="removal_date" placeholder="Дата Удаления">
+                <input type="text" id="edit_removal_date" name="installation_date" placeholder="YYYY-MM-DD" onblur="validateDate(this)">
 
                 <button type="submit">Отправить</button>
             </form>
@@ -67,17 +77,28 @@
             <form id="createForm" onsubmit="SubmitCreateMaintenanceForm(event); return false;" method="post">
                 <h1>Создание Обслуживания</h1>
 
-                <label for="create_id_seat">ID Места:</label>
-                <input type="text" id="create_id_seat" name="id_seat" placeholder="ID Места">
+                <label for="create_id_seat">Учебное место:</label>
+                <select id="create_id_seat" name="id_seat">
+                    <option th:each="seat: ${seats}" th:value="${seat.id}" th:text="
+                            'ID: ' + ${seat.id} + ' ' +
+                            'Номер: ' + ${seat.number} + ' ' +
+                            'Имя: ' + ${seat.WS_name}"></option>
+                </select>
 
-                <label for="create_id_equipment">ID Оборудования:</label>
-                <input type="text" id="create_id_equipment" name="id_equipment" placeholder="ID Оборудования">
+                <label for="create_id_seat">Оборудование:</label>
+                <select id="create_id_equipment" name="id_equipment">
+                    <option th:each="equipment: ${Equipment}" th:value="${equipment.id}" th:text="
+                            'ID: ' + ${equipment.id} + ' ' +
+                            'Исправность: ' + ${equipment.p_i}"></option>
+                </select>
 
                 <label for="create_installation_date">Дата Установки:</label>
-                <input type="text" id="create_installation_date" name="installation_date" placeholder="Дата Установки">
+                <input type="text" id="create_installation_date" name="installation_date" placeholder="YYYY-MM-DD" onblur="validateDate(this)">
+
 
                 <label for="create_removal_date">Дата Удаления:</label>
-                <input type="text" id="create_removal_date" name="removal_date" placeholder="Дата Удаления">
+                <input type="text" id="create_removal_date" name="installation_date" placeholder="YYYY-MM-DD" onblur="validateDate(this)">
+
 
                 <button type="submit">Отправить</button>
             </form>

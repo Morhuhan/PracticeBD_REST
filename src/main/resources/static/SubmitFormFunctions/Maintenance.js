@@ -335,3 +335,10 @@ function SubmitCreateMaintenanceForm(event) {
         return;
     });
 }
+
+function validateDate(input) {
+    if (!checkDataFormat(input.value)) {
+        alert('Неверный формат даты. Используйте формат YYYY-MM-DD.');
+        input.value = ''; // Очистить поле, если формат неверен
+    }
+}
