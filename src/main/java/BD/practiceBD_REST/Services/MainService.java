@@ -133,6 +133,10 @@ public class MainService {
         equipmentTypeDAO.edit(equipmentType);
     }
 
+    public int getEquipmentTypesCount() throws DataAccessException {
+        return equipmentTypeDAO.count();
+    }
+
     // Requests
     public List<Seat> showListFaultySeats() throws DataAccessException {
         return seatDAO.getListFaultySeats();

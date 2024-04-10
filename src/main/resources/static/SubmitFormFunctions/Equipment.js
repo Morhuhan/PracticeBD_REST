@@ -18,40 +18,82 @@ function SubmitDeleteForm() {
             method: 'POST'
         })
         .then(response => {
+
             if (response.ok) {
+
+                // Находим индекс выбранной строки
+                var equipmentIndex = Equipment.findIndex(function(item) {
+                    return item.id.toString() === equipmentId;
+                });
 
                 // Удаляем элемент из глобального массива Equipment
                 Equipment = Equipment.filter(function(item) {
                     return item.id.toString() !== equipmentId;
                 });
 
-                // Удаляем элемент из таблицы на таймлиф шаблоне
                 var row = document.querySelector('tr[data-id="' + equipmentId + '"]');
+                var table = document.getElementById('table');
+                var rowsOnCurrentPage = document.querySelectorAll('tr[data-id]').length;
+                var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+                var totalItems = Equipment.length;
 
-                // Если строка с другой страницы, то на шаблоне ничего не меняем, кроме панели навигации
-                if (row) {
-                    row.remove();
+                // Проверяем, на какой странице находится строка
+                var startIndex = (currentPage - 1) * itemsPerPage;
+                var endIndex = startIndex + itemsPerPage;
 
-                    var rowsOnCurrentPage = document.querySelectorAll('tr[data-id]').length;
+                // Строка со следующей страницы
+                if (equipmentIndex >= endIndex) {
+                    UpdateNavigationPanel();
+                }
 
-                    // Если мы были на крайней странице и удалили последнюю на ней строку, то переходим на предыдущуюю страницу
-                    // Если и так были на первой странице, то ничего не делаем
-                    if (currentPage === totalPages && rowsOnCurrentPage === 0 && currentPage > 1) {
+                // Строка с предыдущей страницы
+                else if (equipmentIndex < startIndex) {
+
+                    // Если текущая страница крайняя, и на ней поседняя строка
+                    if (currentPage === totalPages && rowsOnCurrentPage === 1 && currentPage > 1) {
+                        row.remove();
                         currentPage--;
                         GetEquipmentPage(currentPage);
                     }
 
-                    // Если мы были не на крайней странице, переносим строку со следующей страницы, если она есть
-                    if (currentPage < totalPages ) {
+                    // Если текущая страница крайняя, и на ней не последняя строка
+                    else if (currentPage === totalPages && rowsOnCurrentPage > 1 && currentPage > 1) {
+                        table.deleteRow(1);
+                    }
+
+                    // Если текущая страница не крайняя
+                    else {
+                        table.deleteRow(1);
                         MoveNextRowToCurrentPage();
                     }
                 }
 
-                // Обновляем пагинацию
-                UpdateNavigationPanel();
+                // Строка с текущей страницы
+                else {
 
+                    // Если текущая страница крайняя, и на ней не последняя строка
+                    if (currentPage === totalPages && rowsOnCurrentPage > 1 && currentPage > 1) {
+                        row.remove();
+                    }
+
+                    // Если текущая страница крайняя, и на ней последняя строка
+                    else if (currentPage === totalPages && rowsOnCurrentPage === 1 && currentPage > 1) {
+                        row.remove();
+                        currentPage--;
+                        GetEquipmentPage(currentPage);
+                    }
+
+                    // Если текущая страница не кайняя
+                    else {
+                        row.remove();
+                        MoveNextRowToCurrentPage();
+                    }
+                }
+
+                UpdateNavigationPanel();
                 alert("Оборудование успешно удалено.");
-            } else if (response.status === 500) {
+            }
+            else if (response.status === 500) {
                 response.text().then(errorMessage => {
                     alert("Ошибка сервера: " + errorMessage);
                 });

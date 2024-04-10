@@ -41,9 +41,7 @@ public class MainController {
 
     @GetMapping("/equipment")
     public String showEquipmentForm(Model model) {
-        int countOnPage = 10;
         model.addAttribute("Equipment", mainService.getAllEquipment());
-        model.addAttribute("itemsPerPage", countOnPage);
         model.addAttribute("totalItems", mainService.getEquipmentCount());
         model.addAttribute("equipmentTypes", mainService.getAllEquipmentTypes());
         return "equipmentForm.html";
@@ -52,6 +50,7 @@ public class MainController {
     @GetMapping("/equipmentType")
     public String showEquipmentTypeForm(Model model) {
         model.addAttribute("equipmentTypes", mainService.getAllEquipmentTypes());
+        model.addAttribute("totalItems", mainService.getEquipmentCount());
         return "equipmentTypeForm.html";
     }
 

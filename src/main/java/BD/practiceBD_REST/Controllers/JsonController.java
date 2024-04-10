@@ -143,24 +143,8 @@ public class JsonController {
         }
     }
 
-    @PostMapping("/equipment/get")
-    public ResponseEntity<?> getEquipmentToPage(@RequestBody Map<String, Object> pageRequest) {
-        try {
-            int page = (int) pageRequest.get("page");
-            int itemsPerPage = (int) pageRequest.get("itemsPerPage");
-
-            // Получаем данные оборудования для страницы
-            List<Equipment> equipmentList = mainService.getAllEquipment();
-            // Возвращаем данные и статус OK
-            return ResponseEntity.ok(equipmentList);
-        } catch (Exception e) {
-            // В случае ошибки возвращаем статус Internal Server Error
-            return ResponseEntity.internalServerError().body("Ошибка при получении данных: " + e.getMessage());
-        }
-    }
-
-    @PostMapping("/equipmentType/{id_equipmentType}/delete")
-    public ResponseEntity<?> deleteEquipmentType(@PathVariable("id_equipmentType") int id_equipmentType) {
+    @PostMapping("/equipmentType/{typeId}/delete")
+    public ResponseEntity<?> deleteEquipmentType(@PathVariable("typeId") int id_equipmentType) {
         try {
             mainService.deleteEquipmentType(id_equipmentType);
             return ResponseEntity.ok().build();

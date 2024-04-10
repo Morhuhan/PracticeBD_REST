@@ -49,4 +49,10 @@ public class EquipmentTypeDAO {
 
         return java.util.Objects.requireNonNullElse(result, 0);
     }
+
+    public int count() throws DataAccessException {
+        String sql = "SELECT COUNT(*) FROM public.\"тип_оборудования\"";
+        int count = jdbcTemplate.queryForObject(sql, Integer.class);
+        return count;
+    }
 }
