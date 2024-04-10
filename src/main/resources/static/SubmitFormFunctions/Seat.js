@@ -39,19 +39,6 @@ function MoveNextRowToCurrentPage() {
     }
 }
 
-function MoveNextRowToCurrentPage() {
-    var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
-    // Определяем индекс первого элемента на следующей странице
-    var startIndexNextPage = currentPage * itemsPerPage - 1;
-    // Проверяем, есть ли элементы на следующей странице
-    if (startIndexNextPage < GlobalArray.length) {
-        // Получаем элемент для переноса
-        var seatToMove = GlobalArray[startIndexNextPage];
-        // Создаем строку таблицы с данными из seatToMove
-        AddRowToSeatTable(seatToMove);
-    }
-}
-
 function GetSeatPage(pageNumber) {
 
     var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
