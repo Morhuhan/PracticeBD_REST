@@ -182,6 +182,7 @@ function SubmitDeleteForm() {
                 var table = document.getElementById('table');
                 var rowsOnCurrentPage = document.querySelectorAll('tr[data-id]').length;
                 var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+                var tbody = document.querySelector("#table > table > tbody");
                 var totalItems = GlobalArray.length;
 
                 // Проверяем, на какой странице находится строка
@@ -198,19 +199,18 @@ function SubmitDeleteForm() {
 
                     // Если текущая страница крайняя, и на ней поседняя строка
                     if (currentPage === totalPages && rowsOnCurrentPage === 1 && currentPage > 1) {
-                        row.remove();
                         currentPage--;
                         GetEquipmentPage(currentPage);
                     }
 
                     // Если текущая страница крайняя, и на ней не последняя строка
                     else if (currentPage === totalPages && rowsOnCurrentPage > 1 && currentPage > 1) {
-                        table.deleteRow(1);
+                        tbody.deleteRow(0);
                     }
 
                     // Если текущая страница не крайняя
                     else {
-                        table.deleteRow(1);
+                        tbody.deleteRow(0);
                         MoveNextRowToCurrentPage();
                     }
                 }
