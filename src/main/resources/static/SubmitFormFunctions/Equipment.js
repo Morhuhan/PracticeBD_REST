@@ -3,6 +3,153 @@ document.addEventListener('DOMContentLoaded', function() {
     UpdateNavigationPanel();
 });
 
+function EquipmentRowClick() {
+    var cells = this.cells; // Получаем ячейки текущей строки
+    var editForm = document.getElementById("editForm");
+    var deleteForm = document.getElementById("deleteForm");
+
+    // Проверяем, какая форма открыта - изменения или удаления
+    if (editForm.style.display === 'block') {
+        // Если открыта форма изменения, заполняем поля формы значениями из ячеек
+        document.getElementById("IdToEdit").value = cells[0].textContent;
+        document.getElementById("edit_idEquipmentType").value = cells[1].textContent;
+        document.getElementById("edit_invNumber").value = cells[2].textContent;
+        document.getElementById("edit_pI").value = cells[3].textContent;
+        document.getElementById("edit_note").value = cells[4].textContent;
+    } else if (deleteForm.style.display === 'block') {
+        // Если открыта форма удаления, заполняем поле формы значением из первой ячейки
+        document.getElementById("IdToDelete").value = cells[0].textContent;
+    }
+
+    // Выделить текущую строку и снять выделение с остальных
+    var tableRows = document.querySelectorAll('#table table tr');
+    tableRows.forEach(function(otherRow) {
+        otherRow.classList.remove("selected");
+    });
+    this.classList.add("selected");
+}
+
+// Изменяет строку на текущей странице в свзяи с новыми данными
+function UpdateTableRow(rowId, equipment) {
+    var row = document.querySelector(`tr[data-id="${rowId}"]`);
+    if (row) {
+        row.cells[1].textContent = equipment.id_equipmentType;
+        row.cells[2].textContent = equipment.inv_number;
+        row.cells[3].textContent = equipment.p_i;
+        row.cells[4].textContent = equipment.note;
+    }
+}
+
+// Подгружает новую страницу. Изменяет глобальну переменную currentPage.
+// Удаляет все записи на странице и заменяет их новыми записями Equipment.
+// Использует: EquipmentRowClick
+function GetEquipmentPage(pageNumber) {
+
+    var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+
+    // Обновляем глобальную переменную номера текущей страницы
+    currentPage = pageNumber;
+
+    // Получаем таблицу по идентификатору
+    var table = document.querySelector('#table table tbody');
+
+    // Удаляем существующие строки, кроме заголовка таблицы
+    for (var i = table.rows.length - 1; i > -1; i--) {
+        table.deleteRow(i);
+    }
+
+    // Вычисляем индекс начальной записи для текущей страницы
+    var startIndex = (pageNumber - 1) * itemsPerPage;
+
+    // Перебираем массив GlobalArray и создаем строки таблицы
+    for (var i = startIndex; i < startIndex + itemsPerPage && i < GlobalArray.length; i++) {
+        var equipment = GlobalArray[i];
+        var row = table.insertRow(-1); // Вставляем новую строку в конец таблицы
+        row.setAttribute('data-id', equipment.id);
+
+        // Создаем и заполняем ячейки для каждого поля оборудования
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
+
+        cell1.textContent = equipment.id;
+        cell2.textContent = equipment.id_equipmentType;
+        cell3.textContent = equipment.inv_number;
+        cell4.textContent = equipment.p_i;
+        cell5.textContent = equipment.note;
+
+        // Навешиваем событие onClick на строку
+        row.addEventListener('click', EquipmentRowClick);
+    }
+}
+
+// Создает новую строку на текущей странице с указанными данными. Назначает новой строке событие при клике.
+// Использует EquipmentRowClick
+function AddRowToTable(equipment) {
+    var tableBody = document.querySelector('#table tbody');
+
+    var newRow = tableBody.insertRow(-1);
+
+    var cellId = newRow.insertCell(0);
+    var cellIdEquipmentType = newRow.insertCell(1);
+    var cellInvNumber = newRow.insertCell(2);
+    var cellPI = newRow.insertCell(3);
+    var cellNote = newRow.insertCell(4);
+    newRow.setAttribute('data-id', equipment.id);
+
+    // Назначаем обработчик события click для новой строки
+    newRow.addEventListener('click', EquipmentRowClick);
+
+    cellId.textContent = equipment.id;
+    cellIdEquipmentType.textContent = equipment.id_equipmentType;
+    cellInvNumber.textContent = equipment.inv_number;
+    cellPI.textContent = equipment.p_i;
+    cellNote.textContent = equipment.note;
+}
+
+// Переопределяет навигационную панель, высчитывает кол-во кнопок и навешивает на них GetEquipmentPage(i)
+function UpdateNavigationPanel() {
+
+    var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+    var navigationPanel = document.getElementById('navigationPanel');
+    var totalItems = GlobalArray.length;
+
+    // Очищаем текущую панель навигации
+    navigationPanel.innerHTML = '';
+
+    // Вычисляем новое количество страниц
+    var pageCount = Math.ceil(totalItems / itemsPerPage);
+
+    // Записываем новое количество страниц в глобальную переменную
+    totalPages = pageCount;
+
+    // Создаем кнопки для каждой страницы
+    for (let i = 1; i <= pageCount; i++) {
+        var button = document.createElement('button');
+        button.innerText = i;
+        button.addEventListener('click', function() {
+            GetEquipmentPage(i, itemsPerPage);
+        });
+        navigationPanel.appendChild(button);
+    }
+}
+
+// Пытается передвинуть элемент со следующей страницы на текущую.
+function MoveNextRowToCurrentPage() {
+    var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+    // Определяем индекс первого элемента на следующей странице
+    var startIndexNextPage = currentPage * itemsPerPage - 1;
+    // Проверяем, есть ли элементы на следующей странице
+    if (startIndexNextPage < GlobalArray.length) {
+        // Получаем элемент для переноса
+        var equipmentToMove = GlobalArray[startIndexNextPage];
+        // Создаем строку таблицы с данными из equipmentToMove
+        AddRowToTable(equipmentToMove);
+    }
+}
+
 // Вызывается в момент отправления формы deleteForm.
 // Отправляет fetch запрос на сервер об удалении элемента с указанным id.
 // Если ответ положительный - удаляет строку с таким id из таблицы !!!!!!!!!!!!!!!!!! (а если она на другой странице?)
@@ -22,12 +169,12 @@ function SubmitDeleteForm() {
             if (response.ok) {
 
                 // Находим индекс выбранной строки
-                var equipmentIndex = Equipment.findIndex(function(item) {
+                var equipmentIndex = GlobalArray.findIndex(function(item) {
                     return item.id.toString() === equipmentId;
                 });
 
-                // Удаляем элемент из глобального массива Equipment
-                Equipment = Equipment.filter(function(item) {
+                // Удаляем элемент из глобального массива GlobalArray
+                GlobalArray = GlobalArray.filter(function(item) {
                     return item.id.toString() !== equipmentId;
                 });
 
@@ -35,7 +182,7 @@ function SubmitDeleteForm() {
                 var table = document.getElementById('table');
                 var rowsOnCurrentPage = document.querySelectorAll('tr[data-id]').length;
                 var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
-                var totalItems = Equipment.length;
+                var totalItems = GlobalArray.length;
 
                 // Проверяем, на какой странице находится строка
                 var startIndex = (currentPage - 1) * itemsPerPage;
@@ -108,19 +255,6 @@ function SubmitDeleteForm() {
     }
 }
 
-// Пытается передвинуть элемент со следующей страницы на текущую.
-function MoveNextRowToCurrentPage() {
-    var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
-    // Определяем индекс первого элемента на следующей странице
-    var startIndexNextPage = currentPage * itemsPerPage - 1;
-    // Проверяем, есть ли элементы на следующей странице
-    if (startIndexNextPage < Equipment.length) {
-        // Получаем элемент для переноса
-        var equipmentToMove = Equipment[startIndexNextPage];
-        // Создаем строку таблицы с данными из equipmentToMove
-        AddRowToTable(equipmentToMove);
-    }
-}
 
 // Вызывается в момент отправления формы editForm.
 // Отправляет fetch запрос на сервер об изменении элемента с указанным id указанными данными.
@@ -155,12 +289,12 @@ function SubmitEditForm(event) {
     .then(response => {
         if (response.ok) {
 
-            // Обновляем данные в глобальном массиве Equipment
-            var index = Equipment.findIndex(function(item) {
+            // Обновляем данные в глобальном массиве GlobalArray
+            var index = GlobalArray.findIndex(function(item) {
                 return item.id.toString() === id;
             });
             if (index !== -1) {
-                Equipment[index] = equipment;
+                GlobalArray[index] = equipment;
             }
 
             UpdateTableRow(id, equipment);
@@ -193,7 +327,7 @@ function SubmitCreateForm(event) {
     var p_i = document.getElementById('create_pI').value;
     var note = document.getElementById('create_note').value;
 
-    var totalItems = Equipment.length;
+    var totalItems = GlobalArray.length;
     var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
 
     var equipment = {
@@ -234,8 +368,8 @@ function SubmitCreateForm(event) {
             // Проталкиваем новый элемент в глобальный массив, в связи с тем, что другие функции работают с данными,
             // передаваемыми сервером в качестве массива 1 раз при загрузке страницы, и у них нет возможности
             // работать со строками динамически добавленными без перезагрузки страницы.
-            Equipment.push(equipment);
-            totalItems = Equipment.length;
+            GlobalArray.push(equipment);
+            totalItems = GlobalArray.length;
 
             // Рассчитываем начальный и конечный индексы для текущей страницы
             var startIndex = (currentPage - 1) * itemsPerPage;
@@ -257,136 +391,9 @@ function SubmitCreateForm(event) {
     });
 }
 
-// Создает новую строку на текущей странице с указанными данными. Назначает новой строке событие при клике.
-// Использует EquipmentRowClick
-function AddRowToTable(equipment) {
-    var tableBody = document.querySelector('#table tbody');
 
-    var newRow = tableBody.insertRow(-1);
 
-    var cellId = newRow.insertCell(0);
-    var cellIdEquipmentType = newRow.insertCell(1);
-    var cellInvNumber = newRow.insertCell(2);
-    var cellPI = newRow.insertCell(3);
-    var cellNote = newRow.insertCell(4);
-    newRow.setAttribute('data-id', equipment.id);
 
-    // Назначаем обработчик события click для новой строки
-    newRow.addEventListener('click', EquipmentRowClick);
 
-    cellId.textContent = equipment.id;
-    cellIdEquipmentType.textContent = equipment.id_equipmentType;
-    cellInvNumber.textContent = equipment.inv_number;
-    cellPI.textContent = equipment.p_i;
-    cellNote.textContent = equipment.note;
-}
 
-// Переопределяет навигационную панель, высчитывает кол-во кнопок и навешивает на них GetEquipmentPage(i)
-function UpdateNavigationPanel() {
-
-    var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
-    var navigationPanel = document.getElementById('navigationPanel');
-    var totalItems = Equipment.length;
-
-    // Очищаем текущую панель навигации
-    navigationPanel.innerHTML = '';
-
-    // Вычисляем новое количество страниц
-    var pageCount = Math.ceil(totalItems / itemsPerPage);
-
-    // Записываем новое количество страниц в глобальную переменную
-    totalPages = pageCount;
-
-    // Создаем кнопки для каждой страницы
-    for (let i = 1; i <= pageCount; i++) {
-        var button = document.createElement('button');
-        button.innerText = i;
-        button.addEventListener('click', function() {
-            GetEquipmentPage(i, itemsPerPage);
-        });
-        navigationPanel.appendChild(button);
-    }
-}
-
-// Изменяет строку на текущей странице в свзяи с новыми данными
-function UpdateTableRow(rowId, equipment) {
-    var row = document.querySelector(`tr[data-id="${rowId}"]`);
-    if (row) {
-        row.cells[1].textContent = equipment.id_equipmentType;
-        row.cells[2].textContent = equipment.inv_number;
-        row.cells[3].textContent = equipment.p_i;
-        row.cells[4].textContent = equipment.note;
-    }
-}
-
-// Подгружает новую страницу. Изменяет глобальну переменную currentPage.
-// Удаляет все записи на странице и заменяет их новыми записями Equipment.
-// Использует: EquipmentRowClick 
-function GetEquipmentPage(pageNumber) {
-
-    var itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
-
-    // Обновляем глобальную переменную номера текущей страницы
-    currentPage = pageNumber;
-
-    // Получаем таблицу по идентификатору
-    var table = document.querySelector('#table table tbody');
-
-    // Удаляем существующие строки, кроме заголовка таблицы
-    for (var i = table.rows.length - 1; i > -1; i--) {
-        table.deleteRow(i);
-    }
-
-    // Вычисляем индекс начальной записи для текущей страницы
-    var startIndex = (pageNumber - 1) * itemsPerPage;
-
-    // Перебираем массив Equipment и создаем строки таблицы
-    for (var i = startIndex; i < startIndex + itemsPerPage && i < Equipment.length; i++) {
-        var equipment = Equipment[i];
-        var row = table.insertRow(-1); // Вставляем новую строку в конец таблицы
-        row.setAttribute('data-id', equipment.id);
-
-        // Создаем и заполняем ячейки для каждого поля оборудования
-        var cell1 = row.insertCell(0);
-        var cell2 = row.insertCell(1);
-        var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
-        var cell5 = row.insertCell(4);
-
-        cell1.textContent = equipment.id;
-        cell2.textContent = equipment.id_equipmentType;
-        cell3.textContent = equipment.inv_number;
-        cell4.textContent = equipment.p_i;
-        cell5.textContent = equipment.note;
-
-        // Навешиваем событие onClick на строку
-        row.addEventListener('click', EquipmentRowClick);
-    }
-}
-
-function EquipmentRowClick() {
-    var cells = this.cells; // Получаем ячейки текущей строки
-    var editForm = document.getElementById("editForm");
-    var deleteForm = document.getElementById("deleteForm");
-
-    // Проверяем, какая форма открыта - изменения или удаления
-    if (editForm.style.display === 'block') {
-        // Если открыта форма изменения, заполняем поля формы значениями из ячеек
-        document.getElementById("IdToEdit").value = cells[0].textContent;
-        document.getElementById("edit_idEquipmentType").value = cells[1].textContent;
-        document.getElementById("edit_invNumber").value = cells[2].textContent;
-        document.getElementById("edit_pI").value = cells[3].textContent;
-        document.getElementById("edit_note").value = cells[4].textContent;
-    } else if (deleteForm.style.display === 'block') {
-        // Если открыта форма удаления, заполняем поле формы значением из первой ячейки
-        document.getElementById("IdToDelete").value = cells[0].textContent;
-    }
-
-    // Выделить текущую строку и снять выделение с остальных
-    var tableRows = document.querySelectorAll('#table table tr');
-    tableRows.forEach(function(otherRow) {
-        otherRow.classList.remove("selected");
-    });
-    this.classList.add("selected");
-}
 

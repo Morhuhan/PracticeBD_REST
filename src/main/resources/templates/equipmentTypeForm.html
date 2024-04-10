@@ -9,7 +9,7 @@
 
     <!-- Глобальные переменные JS -->
     <script th:inline="javascript">
-        var equipmentTypes = /*[[${equipmentTypes}]]*/ null;
+        var GlobalArray = /*[[${equipmentTypes}]]*/ null;
         var currentPage = 1;
         var totalPages = 1;
     </script>
@@ -23,7 +23,7 @@
     <!-- Выбор количества строк на странице -->
     <div>
         <label for="itemsPerPage">Строк на странице:</label>
-        <select id="itemsPerPage" onchange="UpdateTypeNavigationPanel(); GetEquipmentTypePage(1, parseInt(itemsPerPage));">
+        <select id="itemsPerPage" onchange="UpdateEquipmentTypeNavigationPanel(); GetEquipmentTypePage(1, parseInt(itemsPerPage));">
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>
