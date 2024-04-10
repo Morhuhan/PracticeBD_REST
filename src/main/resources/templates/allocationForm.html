@@ -1,40 +1,104 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
-    <title>Управление Местоположениями</title>
+    <title>Управление Распределением</title>
     <link rel="stylesheet" type="text/css" href="css/form.css">
     <script th:inline="javascript" src="SubmitFormFunctions/Allocation.js"></script>
     <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
-    <script th:inline="javascript" src="Utility/Listener.js"></script>
+
+    <!-- Глобальные переменные JS -->
+    <script th:inline="javascript">
+        var GlobalArray = /*[[${allocations}]]*/ null;
+        var currentPage = 1;
+        var totalPages = 1;
+    </script>
 </head>
-
 <body>
-
 <header>
-    <img id = "img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
-    <a href="/admin">
+    <img id="img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+    <a href="/requests">
         <img id="img2" src="css/zaprosi.png" class="toggle-submenu">
     </a>
-    <a href="/lab">
-        <img id="img3" src="css/lab.png" class="toggle-submenu">
-    </a>
+    <!-- Выбор количества строк на странице -->
+    <div>
+        <label for="itemsPerPage">Строк на странице:</label>
+        <select id="itemsPerPage" onchange="UpdateAllocationNavigationPanel(); GetAllocationPage(1, parseInt(itemsPerPage.value));">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="100" selected>100</option>
+        </select>
+    </div>
 </header>
 
-<div id="submenu">
-    <ul>
-        <li><a href="/allocation">Allocation</a></li>
-        <li><a href="/classroom">Classroom</a></li>
-        <li><a href="/equipment">Equipment</a></li>
-        <li><a href="/equipmentType">Equipment Type</a></li>
-        <li><a href="/maintenance">Maintenance</a></li>
-        <li><a href="/seat">Seat</a></li>
-    </ul>
-</div>
+<div id="container1">
+    <div id="container2">
+        <div id="input">
+            <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+            <button type="button" onclick="ShowEditForm()">Изменить</button>
+            <button type="button" onclick="ShowCreateForm()">Создать</button>
+        </div>
 
-<div id="container">
+        <div id="forms">
+            <!-- Форма изменения -->
+            <form id="editForm" onsubmit="SubmitEditAllocationForm(event); return false;" method="post">
+                <h1>Изменение Распределения</h1>
+
+                <input type="text" id="IdToEditAllocation" placeholder="Введите ID для изменения">
+
+                <label for="edit_pref">Префикс:</label>
+                <input type="text" id="edit_pref" name="pref" placeholder="Префикс">
+
+                <label for="edit_street">Улица:</label>
+                <input type="text" id="edit_street" name="street" placeholder="Улица">
+
+                <label for="edit_house">Дом:</label>
+                <input type="text" id="edit_house" name="house" placeholder="Дом">
+
+                <label for="edit_room">Комната:</label>
+                <input type="text" id="edit_room" name="room" placeholder="Комната">
+
+                <label for="edit_phone">Телефон:</label>
+                <input type="text" id="edit_phone" name="phone" placeholder="Телефон">
+
+                <button type="submit">Отправить</button>
+            </form>
+
+            <!-- Форма создания -->
+            <form id="createForm" onsubmit="SubmitCreateAllocationForm(event); return false;" method="post">
+                <h1>Создание Распределения</h1>
+
+                <label for="create_pref">Префикс:</label>
+                <input type="text" id="create_pref" name="pref" placeholder="Префикс">
+
+                <label for="create_street">Улица:</label>
+                <input type="text" id="create_street" name="street" placeholder="Улица">
+
+                <label for="create_house">Дом:</label>
+                <input type="text" id="create_house" name="house" placeholder="Дом">
+
+                <label for="create_room">Комната:</label>
+                <input type="text" id="create_room" name="room" placeholder="Комната">
+
+                <label for="create_phone">Телефон:</label>
+                <input type="text" id="create_phone" name="phone" placeholder="Телефон">
+
+                <button type="submit">Отправить</button>
+            </form>
+
+            <!-- Форма удаления -->
+            <div id="deleteForm">
+                <h1>Удаление Распределения</h1>
+
+                <input type="text" id="IdToDeleteAllocation" placeholder="Введите ID для удаления">
+
+                <button type="button" onclick="SubmitDeleteAllocationForm()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
     <div id="table">
         <table>
             <thead>
@@ -43,84 +107,18 @@
                 <th>Префикс</th>
                 <th>Улица</th>
                 <th>Дом</th>
-                <th>Квартира</th>
+                <th>Комната</th>
                 <th>Телефон</th>
             </tr>
             </thead>
             <tbody data-table-type="allocation">
-            <tr th:each="allocation : ${allocations}" th:data-id="${allocation.id}">
-                <td th:text="${allocation.id}"></td>
-                <td th:text="${allocation.pref}"></td>
-                <td th:text="${allocation.street}"></td>
-                <td th:text="${allocation.house}"></td>
-                <td th:text="${allocation.room}"></td>
-                <td th:text="${allocation.phone}"></td>
-            </tr>
+            <!-- Здесь будет динамически заполняться таблица -->
             </tbody>
         </table>
-    </div>
 
-    <div id="input">
-        <button type="button" onclick="ShowDeleteForm()">Удалить</button>
-        <button type="button" onclick="ShowEditForm()">Изменить</button>
-        <button type="button" onclick="ShowCreateForm()">Создать</button>
-    </div>
-
-    <!--Форма изменения-->
-    <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
-        <h1>Изменение Местоположения</h1>
-
-        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
-
-        <label for="edit_pref">Префикс:</label>
-        <input type="text" id="edit_pref" name="pref" placeholder="Префикс">
-
-        <label for="edit_street">Улица:</label>
-        <input type="text" id="edit_street" name="street" placeholder="Улица">
-
-        <label for="edit_house">Дом:</label>
-        <input type="text" id="edit_house" name="house" placeholder="Дом">
-
-        <label for="edit_room">Помещение:</label>
-        <input type="text" id="edit_room" name="room" placeholder="Квартира">
-
-        <label for="edit_phone">Телефон:</label>
-        <input type="text" id="edit_phone" name="phone" placeholder="Телефон">
-
-        <button type="submit">Отправить</button>
-    </form>
-
-    <!--Форма создания-->
-    <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
-        <h1>Создание Местоположения</h1>
-
-        <label for="create_pref">Префикс:</label>
-        <input type="text" id="create_pref" name="pref" placeholder="Префикс">
-
-        <label for="create_street">Улица:</label>
-        <input type="text" id="create_street" name="street" placeholder="Улица">
-
-        <label for="create_house">Дом:</label>
-        <input type="text" id="create_house" name="house" placeholder="Дом">
-
-        <label for="create_room">Квартира:</label>
-        <input type="text" id="create_room" name="room" placeholder="Квартира">
-
-        <label for="create_phone">Помещение:</label>
-        <input type="text" id="create_phone" name="phone" placeholder="Телефон">
-
-        <button type="submit">Отправить</button>
-    </form>
-
-    <!--Форма удаления-->
-    <div id="deleteForm">
-        <h1>Удаление Местоположения</h1>
-
-        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
-
-        <button type="button" onclick="submitDeleteForm()">Удалить</button>
+        <!-- Место под панель навигации -->
+        <div id="navigationPanel"></div>
     </div>
 </div>
-
 </body>
 </html>

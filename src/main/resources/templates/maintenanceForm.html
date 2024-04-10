@@ -1,138 +1,117 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
-    <title>Управление Сервисами</title>
+    <title>Управление Обслуживанием</title>
     <link rel="stylesheet" type="text/css" href="css/form.css">
     <script th:inline="javascript" src="SubmitFormFunctions/Maintenance.js"></script>
     <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
-    <script th:inline="javascript" src="Utility/Listener.js"></script>
+
+    <!-- Глобальные переменные JS -->
+    <script th:inline="javascript">
+        var GlobalArray = /*[[${maintenances}]]*/ null;
+        var currentPage = 1;
+        var totalPages = 1;
+    </script>
 </head>
-
 <body>
-
 <header>
-    <img id = "img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+    <img id="img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
     <a href="/requests">
         <img id="img2" src="css/zaprosi.png" class="toggle-submenu">
     </a>
+    <!-- Выбор количества строк на странице -->
+    <div>
+        <label for="itemsPerPage">Строк на странице:</label>
+        <select id="itemsPerPage" onchange="UpdateMaintenanceNavigationPanel(); GetMaintenancePage(1, parseInt(itemsPerPage.value));">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="100" selected>100</option>
+        </select>
+    </div>
 </header>
 
-<div id="submenu">
-    <ul>
-        <li><a href="/allocation">Allocation</a></li>
-        <li><a href="/classroom">Classroom</a></li>
-        <li><a href="/equipment">Equipment</a></li>
-        <li><a href="/equipmentType">Equipment Type</a></li>
-        <li><a href="/maintenance">Maintenance</a></li>
-        <li><a href="/seat">Seat</a></li>
-    </ul>
-</div>
+<div id="container1">
+    <div id="container2">
+        <div id="input">
+            <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+            <button type="button" onclick="ShowEditForm()">Изменить</button>
+            <button type="button" onclick="ShowCreateForm()">Создать</button>
+        </div>
 
-<div id="container">
+        <div id="forms">
+            <!-- Форма изменения -->
+            <form id="editForm" onsubmit="SubmitEditMaintenanceForm(event); return false;" method="post">
+                <h1>Изменение Обслуживания</h1>
+
+                <input type="text" id="IdToEditMaintenance" placeholder="Введите ID для изменения">
+
+                <label for="edit_id_seat">ID Места:</label>
+                <input type="text" id="edit_id_seat" name="id_seat" placeholder="ID Места">
+
+                <label for="edit_id_equipment">ID Оборудования:</label>
+                <input type="text" id="edit_id_equipment" name="id_equipment" placeholder="ID Оборудования">
+
+                <label for="edit_installation_date">Дата Установки:</label>
+                <input type="text" id="edit_installation_date" name="installation_date" placeholder="Дата Установки">
+
+                <label for="edit_removal_date">Дата Удаления:</label>
+                <input type="text" id="edit_removal_date" name="removal_date" placeholder="Дата Удаления">
+
+                <button type="submit">Отправить</button>
+            </form>
+
+            <!-- Форма создания -->
+            <form id="createForm" onsubmit="SubmitCreateMaintenanceForm(event); return false;" method="post">
+                <h1>Создание Обслуживания</h1>
+
+                <label for="create_id_seat">ID Места:</label>
+                <input type="text" id="create_id_seat" name="id_seat" placeholder="ID Места">
+
+                <label for="create_id_equipment">ID Оборудования:</label>
+                <input type="text" id="create_id_equipment" name="id_equipment" placeholder="ID Оборудования">
+
+                <label for="create_installation_date">Дата Установки:</label>
+                <input type="text" id="create_installation_date" name="installation_date" placeholder="Дата Установки">
+
+                <label for="create_removal_date">Дата Удаления:</label>
+                <input type="text" id="create_removal_date" name="removal_date" placeholder="Дата Удаления">
+
+                <button type="submit">Отправить</button>
+            </form>
+
+            <!-- Форма удаления -->
+            <div id="deleteForm">
+                <h1>Удаление Обслуживания</h1>
+
+                <input type="text" id="IdToDeleteMaintenance" placeholder="Введите ID для удаления">
+
+                <button type="button" onclick="SubmitDeleteMaintenanceForm()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
     <div id="table">
         <table>
             <thead>
             <tr>
                 <th>ID</th>
-                <th>ID места</th>
-                <th>ID оборудования</th>
-                <th>Дата установки</th>
-                <th>Дата снятия</th>
+                <th>ID Места</th>
+                <th>ID Оборудования</th>
+                <th>Дата Установки</th>
+                <th>Дата Удаления</th>
             </tr>
             </thead>
             <tbody data-table-type="maintenance">
-            <tr th:each="maintenance : ${maintenances}" th:data-id="${maintenance.id}">
-                <td th:text="${maintenance.id}"></td>
-                <td th:text="${maintenance.id_seat}"></td>
-                <td th:text="${maintenance.id_equipment}"></td>
-                <td th:text="${maintenance.installation_date}"></td>
-                <td th:text="${maintenance.removal_date}"></td>
-            </tr>
+            <!-- Здесь будет динамически заполняться таблица -->
             </tbody>
         </table>
-    </div>
 
-    <div id="input">
-        <button type="button" onclick="ShowDeleteForm()">Удалить</button>
-        <button type="button" onclick="ShowEditForm()">Изменить</button>
-        <button type="button" onclick="ShowCreateForm()">Создать</button>
-    </div>
-
-    <!--Форма изменения-->
-    <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
-        <h1>Изменение сервиса</h1>
-
-        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
-
-        <label for="edit_idSeat">Место:</label>
-        <select id="edit_idSeat" name="idSeat">
-            <option th:each="seat : ${seats}" th:value="${seat.id}" th:text="
-            'ID: ' + ${seat.id} + ' - ' +
-            'Номер: ' + ${seat.number} + ' - ' +
-            'Имя: ' + ${seat.WS_name} + ' - ' +
-            'Ip: ' + ${seat.ip}"></option>
-        </select>
-
-        <label for="edit_idEquipment">Оборудование:</label>
-        <select id="edit_idEquipment" name="idEquipment">
-            <option th:each="equipment : ${Equipment}" th:value="${equipment.id}" th:text="
-            'ID: ' + ${equipment.id} + ' - ' +
-            'Инв. номер: ' + ${equipment.inv_number} + ' - ' +
-            'Примечание: ' + ${equipment.note}"></option>
-        </select>
-
-        <label for="edit_installationDate">Дата установки:</label>
-        <input type="text" id="edit_installationDate" name="installationDate" placeholder="YYYY-MM-DD">
-
-        <label for="edit_removalDate">Дата снятия:</label>
-        <input type="text" id="edit_removalDate" name="removalDate" placeholder="YYYY-MM-DD">
-
-        <button type="submit">Отправить</button>
-    </form>
-
-    <!--Форма создания-->
-    <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
-
-        <h1>Создание сервиса</h1>
-
-        <label for="create_idSeat">Место:</label>
-        <select id="create_idSeat" name="idSeat">
-            <option th:each="seat : ${seats}" th:value="${seat.id}" th:text="
-            'ID: ' + ${seat.id} + ' - ' +
-            'Номер: ' + ${seat.number} + ' - ' +
-            'Имя: ' + ${seat.WS_name} + ' - ' +
-            'Ip: ' + ${seat.ip}"></option>
-        </select>
-
-        <label for="create_idEquipment">Оборудование:</label>
-        <select id="create_idEquipment" name="idEquipment">
-            <option th:each="equipment : ${Equipment}" th:value="${equipment.id}" th:text="
-            'ID: ' + ${equipment.id} + ' - ' +
-            'Инв. номер: ' + ${equipment.inv_number} + ' - ' +
-            'Примечание: ' + ${equipment.note}"></option>
-        </select>
-
-        <label for="create_installationDate">Дата установки:</label>
-        <input type="text" id="create_installationDate" name="installationDate" placeholder="YYYY-MM-DD">
-
-        <label for="create_removalDate">Дата снятия:</label>
-        <input type="text" id="create_removalDate" name="removalDate" placeholder="YYYY-MM-DD">
-
-        <button type="submit">Отправить</button>
-    </form>
-
-    <!--Форма удаления-->
-    <div id="deleteForm">
-        <h1>Удаление сервиса</h1>
-
-        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
-
-        <button type="button" onclick="submitDeleteForm()">Удалить</button>
+        <!-- Место под панель навигации -->
+        <div id="navigationPanel"></div>
     </div>
 </div>
-
 </body>
 </html>

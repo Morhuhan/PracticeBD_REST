@@ -1,138 +1,124 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Управление Классами</title>
     <link rel="stylesheet" type="text/css" href="css/form.css">
     <script th:inline="javascript" src="SubmitFormFunctions/Classroom.js"></script>
     <script th:inline="javascript" src="Utility/ToggleMenu.js"></script>
-    <script th:inline="javascript" src="Utility/Listener.js"></script>
+
+    <!-- Глобальные переменные JS -->
+    <script th:inline="javascript">
+        var GlobalArray = /*[[${classrooms}]]*/ null;
+        var currentPage = 1;
+        var totalPages = 1;
+    </script>
 </head>
-
 <body>
-
 <header>
-    <img id = "img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
+    <img id="img1" src="css/burger.png" class="toggle-submenu" onclick="toggleMenu()">
     <a href="/requests">
         <img id="img2" src="css/zaprosi.png" class="toggle-submenu">
     </a>
+    <!-- Выбор количества строк на странице -->
+    <div>
+        <label for="itemsPerPage">Строк на странице:</label>
+        <select id="itemsPerPage" onchange="UpdateClassroomNavigationPanel(); GetClassroomPage(1, parseInt(itemsPerPage.value));">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="100" selected>100</option>
+        </select>
+    </div>
 </header>
 
-<div id="submenu">
-    <ul>
-        <li><a href="/allocation">Allocation</a></li>
-        <li><a href="/classroom">Classroom</a></li>
-        <li><a href="/equipment">Equipment</a></li>
-        <li><a href="/equipmentType">Equipment Type</a></li>
-        <li><a href="/maintenance">Maintenance</a></li>
-        <li><a href="/seat">Seat</a></li>
-    </ul>
-</div>
+<div id="container1">
+    <div id="container2">
+        <div id="input">
+            <button type="button" onclick="ShowDeleteForm()">Удалить</button>
+            <button type="button" onclick="ShowEditForm()">Изменить</button>
+            <button type="button" onclick="ShowCreateForm()">Создать</button>
+        </div>
 
-<div id="container">
+        <div id="forms">
+            <!-- Форма изменения -->
+            <form id="editForm" onsubmit="SubmitEditClassroomForm(event); return false;" method="post">
+                <h1>Изменение Класса</h1>
+
+                <input type="text" id="IdToEditClassroom" placeholder="Введите ID для изменения">
+
+                <label for="edit_id_allocation">ID Распределения:</label>
+                <input type="text" id="edit_id_allocation" name="id_allocation" placeholder="ID Распределения">
+
+                <label for="edit_current_num_of_places">Текущее Кол-во Мест:</label>
+                <input type="text" id="edit_current_num_of_places" name="current_num_of_places" placeholder="Текущее Кол-во Мест">
+
+                <label for="edit_max_num_of_places">Макс. Кол-во Мест:</label>
+                <input type="text" id="edit_max_num_of_places" name="max_num_of_places" placeholder="Макс. Кол-во Мест">
+
+                <label for="edit_department">Отдел:</label>
+                <input type="text" id="edit_department" name="department" placeholder="Отдел">
+
+                <label for="edit_note">Примечание:</label>
+                <input type="text" id="edit_note" name="note" placeholder="Примечание">
+
+                <button type="submit">Отправить</button>
+            </form>
+
+            <!-- Форма создания -->
+            <form id="createForm" onsubmit="SubmitCreateClassroomForm(event); return false;" method="post">
+                <h1>Создание Класса</h1>
+
+                <label for="create_id_allocation">ID Распределения:</label>
+                <input type="text" id="create_id_allocation" name="id_allocation" placeholder="ID Распределения">
+
+                <label for="create_current_num_of_places">Текущее Кол-во Мест:</label>
+                <input type="text" id="create_current_num_of_places" name="current_num_of_places" placeholder="Текущее Кол-во Мест">
+
+                <label for="create_max_num_of_places">Макс. Кол-во Мест:</label>
+                <input type="text" id="create_max_num_of_places" name="max_num_of_places" placeholder="Макс. Кол-во Мест">
+
+                <label for="create_department">Отдел:</label>
+                <input type="text" id="create_department" name="department" placeholder="Отдел">
+
+                <label for="create_note">Примечание:</label>
+                <input type="text" id="create_note" name="note" placeholder="Примечание">
+
+                <button type="submit">Отправить</button>
+            </form>
+
+            <!-- Форма удаления -->
+            <div id="deleteForm">
+                <h1>Удаление Класса</h1>
+
+                <input type="text" id="IdToDeleteClassroom" placeholder="Введите ID для удаления">
+
+                <button type="button" onclick="SubmitDeleteClassroomForm()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
     <div id="table">
         <table>
             <thead>
             <tr>
                 <th>ID</th>
-                <th>ID местоположения</th>
-                <th>Текущее кол-во мест</th>
-                <th>Макс. кол-во мест</th>
-                <th>Кафедра</th>
+                <th>ID Распределения</th>
+                <th>Текущее Кол-во Мест</th>
+                <th>Макс. Кол-во Мест</th>
+                <th>Отдел</th>
                 <th>Примечание</th>
             </tr>
             </thead>
             <tbody data-table-type="classroom">
-            <tr th:each="classroom : ${classrooms}" th:data-id="${classroom.id}">
-                <td th:text="${classroom.id}"></td>
-                <td th:text="${classroom.id_allocation}"></td>
-                <td th:text="${classroom.current_num_of_places}"></td>
-                <td th:text="${classroom.max_num_of_places}"></td>
-                <td th:text="${classroom.department}"></td>
-                <td th:text="${classroom.note}"></td>
-            </tr>
+            <!-- Здесь будет динамически заполняться таблица -->
             </tbody>
         </table>
-    </div>
 
-    <div id="input">
-        <button type="button" onclick="ShowDeleteForm()">Удалить</button>
-        <button type="button" onclick="ShowEditForm()">Изменить</button>
-        <button type="button" onclick="ShowCreateForm()">Создать</button>
-    </div>
-
-    <!--Форма изменения-->
-    <form id="editForm" onsubmit="submitEditForm(event); return false;" method="post">
-        <h1>Изменение Класса</h1>
-
-        <input type="text" id="IdToEdit" placeholder="Введите ID для изменения">
-
-        <label for="edit_idAllocation">Адрес:</label>
-        <select id="edit_idAllocation" name="idAllocation">
-            <option th:each="allocation : ${allocations}" th:value="${allocation.id}" th:text="
-            'ID: ' + ${allocation.id} + '-' +
-            'Адрес: ' + ${allocation.pref} + ' ' +
-            ${allocation.house}  + ' ' +
-            ${allocation.room}  + ' ' +
-            'Тел: ' + ${allocation.phone}  + ' '" ></option>
-        </select>
-
-        <label for="edit_currentNumOfPlaces">Текущее кол-во мест:</label>
-        <input type="text" id="edit_currentNumOfPlaces" name="currentNumOfPlaces" placeholder="Текущее кол-во мест">
-
-        <label for="edit_maxNumOfPlaces">Макс. кол-во мест:</label>
-        <input type="text" id="edit_maxNumOfPlaces" name="maxNumOfPlaces" placeholder="Макс. кол-во мест">
-
-        <label for="edit_department">Кафедра:</label>
-        <input type="text" id="edit_department" name="department" placeholder="Кафедра">
-
-        <label for="edit_note">Примечание:</label>
-        <input type="text" id="edit_note" name="note" placeholder="Примечание">
-
-        <button type="submit">Отправить</button>
-    </form>
-
-    <!--Форма создания-->
-    <form id="createForm" onsubmit="submitCreateForm(event); return false;" method="post">
-        <h1>Создание Класса</h1>
-
-        <label for="create_idAllocation">Адрес: </label>
-        <select id="create_idAllocation" name="idAllocation">
-            <option th:each="allocation : ${allocations}" th:value="${allocation.id}" th:text="
-            'ID: ' + ${allocation.id} + ', ' +
-            'Адрес: ' + ${allocation.pref} + ' ' +
-            ${allocation.street}  + ' ' +
-            ${allocation.house}  + ' ' +
-            ${allocation.room}  + ' ' +
-            'Тел: ' + ${allocation.phone}  + ' '" ></option>
-        </select>
-
-        <label for="create_currentNumOfPlaces">Текущее кол-во мест:</label>
-        <input type="text" id="create_currentNumOfPlaces" name="currentNumOfPlaces" placeholder="Текущее кол-во мест">
-
-        <label for="create_maxNumOfPlaces">Макс. кол-во мест:</label>
-        <input type="text" id="create_maxNumOfPlaces" name="maxNumOfPlaces" placeholder="Макс. кол-во мест">
-
-        <label for="create_department">Кафедра:</label>
-        <input type="text" id="create_department" name="department" placeholder="Кафедра">
-
-        <label for="create_note">Примечание:</label>
-        <input type="text" id="create_note" name="note" placeholder="Примечание">
-
-        <button type="submit">Отправить</button>
-    </form>
-
-    <!--Форма удаления-->
-    <div id="deleteForm">
-        <h1>Удаление Класса</h1>
-
-        <input type="text" id="IdToDelete" placeholder="Введите ID для удаления">
-
-        <button type="button" onclick="submitDeleteForm()">Удалить</button>
+        <!-- Место под панель навигации -->
+        <div id="navigationPanel"></div>
     </div>
 </div>
-
 </body>
 </html>
